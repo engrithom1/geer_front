@@ -1,7 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Dashbord from "../views/Dashbord.vue";
+///accounts
 import Profile from "../views/Profile.vue";
-import Account from "../views/profile/Account.vue";
+import Account from "../views/account/Account.vue";
+import News from "../views/account/News.vue";
+import Modules from "../views/account/Modules.vue";
+import Books from "../views/account/Books.vue";
+import Audios from "../views/account/Audios.vue";
+import Videos from "../views/account/Videos.vue";
+import Discussions from "../views/account/Discussions.vue";
 /////Dashbord pageeeeee
 import Home from "../views/dashbord/Home.vue";
 import Forums from "../views/dashbord/Forums.vue";
@@ -69,15 +76,45 @@ const routes = [
     ]
   },
   {
-    path: "/profile",
+    path: "/account",
     name: "Profile",
     component: Profile,
-    redirect:"/profile",
+    redirect:"/account",
     children:[
       {
-        path:'/profile',
+        path:'/account',
         name:Account,
         component:Account
+      },
+      {
+        path:'/account/news',
+        name:News,
+        component:News
+      },
+      {
+        path:'/account/modules',
+        name:Modules,
+        component:Modules
+      },
+      {
+        path:'/account/videos',
+        name:Videos,
+        component:Videos
+      },
+      {
+        path:'/account/audios',
+        name:Audios,
+        component:Audios
+      },
+      {
+        path:'/account/books',
+        name:Books,
+        component:Books
+      },
+      {
+        path:'/account/discussions',
+        name:Discussions,
+        component:Discussions
       }
     ]
   },

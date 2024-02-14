@@ -73,6 +73,7 @@ export default {
     this.isLoged();
     //alert(localStorage.getItem("user"));
     //this.reload();
+    //axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
     axios.defaults.headers.common["Authorization"] =
       "Bearer " + localStorage.getItem("user_token");
   },

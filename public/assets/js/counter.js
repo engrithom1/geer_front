@@ -26,3 +26,9 @@ if (a == 0 && $(window).scrollTop() > oTop) {
     });
     a = 1;
 }
+
+$('.navbar-nav li a').on('click', function(){
+    if(!$( this ).hasClass('dropdown-toggle')){
+        $('.navbar-collapse').collapse('hide');
+    }
+});

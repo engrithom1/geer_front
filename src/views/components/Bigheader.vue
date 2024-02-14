@@ -146,7 +146,7 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="app-icon">
-                                            <a href="/profile">
+                                            <a href="/account">
                                                 <div class="icon">
                                                     <img src="/assets/images/icons/user.png" width="24px" class="bar-icon" alt="dashbord">
                                                 </div>
@@ -168,7 +168,7 @@
                             </div>
                         </li>
                         <li class="header-btn custom-dropdown profile-btn btn-group">
-                            <a class="main-link" href="/profile">
+                            <a class="main-link" href="/account">
                                 <img src="/assets/images/icons/user_sm.png" class="d-md-none" width="18px"/>
                                 <div class="media d-none d-sm-flex ">
                                     <div class="user-img">

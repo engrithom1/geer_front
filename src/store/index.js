@@ -5,16 +5,16 @@ export default createStore({
   state: {
 
     //back end local url
-    //api_url:"http://localhost:8000/api",
-    //img_url:"http://localhost:8000/storage/images/",
-    //pdf_url:"http://localhost:8000/storage/pdf/",
-    //audio_url:"http://localhost:8000/storage/audio/",
+    api_url:"http://localhost:8000/api",
+    img_url:"http://localhost:8000/storage/images/",
+    pdf_url:"http://localhost:8000/storage/pdf/",
+    audio_url:"http://localhost:8000/storage/audio/",
 
     //back end onli url
-    api_url:"https://akiliforum.com/geer_back/api",
-    img_url:"https://akiliforum.com/geer_back/back/public/storage/images/",
-    pdf_url:"https://akiliforum.com/geer_back/back/public/storage/pdf/",
-    audio_url:"https://akiliforum.com/geer_back/back/public/storage/audio/",
+    //api_url:"https://akiliforum.com/geer_back/api",
+    //img_url:"https://akiliforum.com/geer_back/back/public/storage/images/",
+    //pdf_url:"https://akiliforum.com/geer_back/back/public/storage/pdf/",
+    //audio_url:"https://akiliforum.com/geer_back/back/public/storage/audio/",
     user:{},
     errors:[],
     errorsSMS:""

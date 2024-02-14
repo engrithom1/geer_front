@@ -73,7 +73,7 @@
                     </router-link>
                 </li>
                 <li id="profile">
-                    <a href="/profile">
+                    <a href="/account">
                         <img src="/assets/images/icons/user.png" class="bar-icon-img" alt="event">
                         <h4>Account</h4>
                     </a>
