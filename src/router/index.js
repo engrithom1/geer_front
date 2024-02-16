@@ -9,6 +9,9 @@ import Books from "../views/account/Books.vue";
 import Audios from "../views/account/Audios.vue";
 import Videos from "../views/account/Videos.vue";
 import Discussions from "../views/account/Discussions.vue";
+import AllMentors from "../views/account/AllMentors.vue";
+import Mentors from "../views/account/Mentors.vue";
+import AllStudents from "../views/account/AllStudents.vue";
 /////Dashbord pageeeeee
 import Home from "../views/dashbord/Home.vue";
 import Forums from "../views/dashbord/Forums.vue";
@@ -115,6 +118,21 @@ const routes = [
         path:'/account/discussions',
         name:Discussions,
         component:Discussions
+      },
+      {
+        path:'/account/all-mentors',
+        name:AllMentors,
+        component:AllMentors
+      },
+      {
+        path:'/account/mentors',
+        name:Mentors,
+        component:Mentors
+      },
+      {
+        path:'/account/all-students',
+        name:AllStudents,
+        component:AllStudents
       }
     ]
   },

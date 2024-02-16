@@ -162,7 +162,7 @@ export default {
                 setTimeout(function(){
                     //alert('after waiting')
                     window.location.replace('/');
-                },5000);
+                },2000);
              
             } else {
                 var message = response.data.message;

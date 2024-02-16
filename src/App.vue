@@ -1,6 +1,11 @@
 <template>
   <div v-if="loged">
-    <div v-if="user.auth_statuses_id < 5">
+    <!--verify-->
+    <div v-if="user.auth_statuses_id == 0">
+      <Verify :user="user"/>
+    </div>
+    <!--student-->
+    <div v-if="user.auth_statuses_id < 5 && user.auth_statuses_id != 0">
       <JoinForm :user="user"/>
     </div>
     <div v-if="user.auth_statuses_id == 5">
@@ -17,12 +22,14 @@
 <script>
 import axios from "axios";
 import Authentication from "./views/auth/Authentication.vue";
+import Verify from "./views/auth/Verify.vue";
 import JoinForm from "./views/JoinForm.vue"
 
 export default {
   components: {
     Authentication,
-    JoinForm
+    JoinForm,
+    Verify
   },
   data() {
     return {
@@ -49,12 +56,7 @@ export default {
     },
 
     async reload() {
-      if(localStorage.getItem("user")){
-        var user = localStorage.getItem("user");
-        if(user){
-          var us = JSON.parse(user)
-          var user_id = us.id 
-        var response = await axios.post(this.$store.state.api_url+'/reload',user_id)
+        var response = await axios.post(this.$store.state.api_url+'/reload')
       .catch(errors =>{
         console.log(errors)
      })
@@ -62,10 +64,9 @@ export default {
       if (response.data.success) {
         this.user = response.data.dataz.user
         localStorage.setItem('user',JSON.stringify(response.data.dataz.user))
+        console.log('loaded successfully')
      }
      }
-        }
-      }
       
     },
   },
