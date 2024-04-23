@@ -15,6 +15,11 @@ export default createStore({
     //img_url:"https://akiliforum.com/geer_back/back/public/storage/images/",
     //pdf_url:"https://akiliforum.com/geer_back/back/public/storage/pdf/",
     //audio_url:"https://akiliforum.com/geer_back/back/public/storage/audio/",
+    ///////imedconnect
+    //api_url:"https://imedconnect.or.tz/geer_back/api",
+    //img_url:"https://imedconnect.or.tz/geer_back/back/public/storage/images/",
+    //pdf_url:"https://imedconnect.or.tz/geer_back/back/public/storage/pdf/",
+    //audio_url:"https://imedconnect.or.tz/geer_back/back/public/storage/audio/",
     user:{},
     errors:[],
     errorsSMS:""

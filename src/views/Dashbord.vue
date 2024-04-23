@@ -24,6 +24,12 @@
                         <h4>My Modules</h4>
                     </router-link>
                 </li>
+                <li id="modules" v-if="user.roles_id == 2">
+                    <router-link to="/my-modules">
+                        <img src="/assets/images/icons/notes.png" class="bar-icon-img" alt="favourite">
+                        <h4>All Modules</h4>
+                    </router-link>
+                </li>
                 <!--li>
                     <a href="documents.html">
                         <img src="/assets/images/icons/notes.png" class="bar-icon-img" alt="favourite">
@@ -48,7 +54,19 @@
                         <h4>Forums</h4>
                     </router-link>
                 </li>
-                <li id="test">
+                <li v-if="user.roles_id == 1" id="forums">
+                    <router-link to="/student-mentors">
+                        <img src="/assets/images/icons/mentors.png" class="bar-icon-img" alt="games">
+                        <h4>Mentors</h4>
+                    </router-link>
+                </li>
+                <li v-if="user.roles_id == 3" id="forums">
+                    <router-link to="/all-mentors">
+                        <img src="/assets/images/icons/mentors.png" class="bar-icon-img" alt="games">
+                        <h4>Mentors</h4>
+                    </router-link>
+                </li>
+                <li v-if="user.roles_id == 3 || user.roles_id == 1" id="test">
                     <router-link to="/">
                         <img src="/assets/images/icons/answer.png" class="bar-icon-img" alt="weather">
                         <h4>Test & Quiz</h4>
@@ -72,10 +90,22 @@
                         <h4>Recruitments</h4>
                     </router-link>
                 </li>
-                <li id="profile">
+                <li v-if="user.roles_id == 2" id="profile">
+                    <a href="/account">
+                        <img src="/assets/images/icons/user.png" class="bar-icon-img" alt="event">
+                        <h4>Metors Panel</h4>
+                    </a>
+                </li>
+                <li v-if="user.roles_id == 1" id="profile">
                     <a href="/account">
                         <img src="/assets/images/icons/user.png" class="bar-icon-img" alt="event">
                         <h4>Account</h4>
+                    </a>
+                </li>
+                <li v-if="user.roles_id == 3" id="profile">
+                    <a href="/account">
+                        <img src="/assets/images/icons/admin.png" class="bar-icon-img" alt="event">
+                        <h4>Admin Panel</h4>
                     </a>
                 </li>
 

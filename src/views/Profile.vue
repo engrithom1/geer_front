@@ -14,7 +14,7 @@
                     </li>
                     <li v-if="this.user.roles_id == 3" class="active">
                         <router-link to="/account/news">
-                            <span class="fa fa-user iw-14 ih-14"></span>
+                            <span class="fa fa-file-text iw-14 ih-14"></span>
                             <h6>News</h6>
                         </router-link>
                     </li>
@@ -26,46 +26,41 @@
                     </li>
                     <li v-if="this.user.roles_id == 3">
                         <router-link to="/account/videos">
-                            <span class="fa fa-user iw-14 ih-14"></span>
+                            <span class="fa fa-video-camera iw-14 ih-14"></span>
                             <h6>videos</h6>
                         </router-link>
                     </li>
                     <li v-if="this.user.roles_id == 3">
                         <router-link to="/account/audios">
-                            <span class="fa fa-user iw-14 ih-14"></span>
+                            <span class="fa fa-headphones iw-14 ih-14"></span>
                             <h6>audios</h6>
                         </router-link>
                     </li>
                     <li v-if="this.user.roles_id == 3">
                         <router-link to="/account/books">
-                            <span class="fa fa-user iw-14 ih-14"></span>
+                            <span class="fa fa-file-pdf-o iw-14 ih-14"></span>
                             <h6>books</h6>
                         </router-link>
                     </li>
                     <li v-if="this.user.roles_id == 3">
                         <router-link to="/account/discussions">
-                            <span class="fa fa-user iw-14 ih-14"></span>
+                            <span class="fa fa-align-center iw-14 ih-14"></span>
                             <h6>discussion</h6>
                         </router-link>
                     </li>
-                    <li v-if="this.user.roles_id == 3">
-                        <router-link to="/account/all-mentors">
-                            <span class="fa fa-user iw-14 ih-14"></span>
-                            <h6>Mentors</h6>
+                    
+                    <li v-if="this.user.roles_id == 2">
+                        <router-link to="/account/mentor-students">
+                            <span class="fa fa-users iw-14 ih-14"></span>
+                            <h6> Participants</h6>
                         </router-link>
                     </li>
-                    <li v-if="this.user.roles_id == 1">
-                        <router-link to="/account/mentors">
-                            <span class="fa fa-user iw-14 ih-14"></span>
-                            <h6>Mentors</h6>
-                        </router-link>
-                    </li>
-                    <li v-if="this.user.roles_id == 3">
+                    <!--li v-if="this.user.roles_id == 3">
                         <router-link to="/account/all-student">
-                            <span class="fa fa-user iw-14 ih-14"></span>
-                            <h6>Students</h6>
+                            <span class="fa fa-users iw-14 ih-14"></span>
+                            <h6> Participants</h6>
                         </router-link>
-                    </li>
+                    </li-->
                     <li>
                         <a href="/">
                             <span class="fa fa-user iw-14 ih-14"></span>

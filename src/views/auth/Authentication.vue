@@ -34,7 +34,7 @@
                             </div>
                             <div class="login-discription">
                                 <h3>Hello, Welcome Back</h3>
-                                <h4>Welcome to IMED, please login to your account.
+                                <h4>Welcome to IMEDConnect, please login..
                                 </h4>
                             </div>
                             <div class="form-sec">
@@ -44,8 +44,8 @@
                                             {{ this.$store.state.errorsSMS }}
                                         </p>
                                         <p v-for="error in this.$store.state.errors" :key="error" class="text-danger">
-                    {{ error[0] }}
-                  </p>
+                                            {{ error[0] }}
+                                        </p>
                                             
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">Phone Number</label>
@@ -84,8 +84,8 @@
                                 <h2>Register</h2>
                             </div>
                             <div class="login-discription">
-                                <h3>Hello</h3>
-                                <h4>Welcome to IMED, create your account below to start.</h4>
+                                <h3>Welcome to IMEDConnect</h3>
+                                <h4> Fill required information to get registered.</h4>
                             </div>
                             <div class="form-sec">
                                 <div>
@@ -94,8 +94,8 @@
                                             {{ this.$store.state.errorsSMS }}
                                         </p>
                                             <p v-for="error in this.$store.state.errors" :key="error" class="text-danger">
-                    {{ error[0] }}
-                  </p>
+                                                {{ error[0] }}
+                                            </p>
                                            
                                         
                                         <div class="form-group">
@@ -107,7 +107,7 @@
                                             <label for="exampleInputEmail1">Phone Number</label>
                                             <input type="text" v-model="form2.phone" required class="form-control" id="exampleInputEmail1"
                                                 placeholder="0xxxxxxxxx">
-                                           
+                                                <span class="text-warning text-sm"> <i class="fa fa-warning"></i> Make sure your Phonenumber is available for calls and SMS.</span>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Password</label>
@@ -148,6 +148,7 @@ export default {
     return {
       errors: "",
       auth:true,
+      sure:false,
       form: {
         phone: "",
         password: "",
@@ -165,8 +166,7 @@ export default {
       //alert('you will soon get loged in')
     },
     register() {
-      this.$store.dispatch("registerUser", this.form2);
-      //alert('you will soon get register')
+        this.$store.dispatch("registerUser", this.form2);
     },
     toggleLogin(){
         this.auth = !this.auth

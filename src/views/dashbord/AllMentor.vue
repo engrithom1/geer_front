@@ -1,10 +1,17 @@
 <template>
-    
-    <div class="about-profile section-b-space">
-        <div class="card-title">
-            <h3>All Mentors</h3>
+    <!--  event cover start -->
+    <div class="event-cover light-cover mb-5">
+        <div class="event-img bg-size blur-up lazyloaded event-dashbord">
+            <div class="event-content">
+                <h1>All Mentors</h1>
+            </div>
         </div>
-        <div class="px-3">
+    </div>
+    <!--  event cover end -->
+    <!--news feeds-->
+    <div class="container-fluid section-t-space px-0 layout-default">
+        <div class="page-content">
+            <div class="px-3 w-100">
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Active</button>
@@ -26,29 +33,33 @@
                                 <h4>No Notes Found</h4>
                             </div>
 
-                            <div class="row">
-                                <div class="col-sm-6 col-md-3" v-for="mentor in amentors">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="media-body">
-                                            <img :src="this.$store.state.img_url+mentor.avatar" class="w-100 img-fluid blur-up bg-img lazyloaded" style="display: block;">
-                                            <p class="video-p text-center my-1">{{ mentor.name }}</p>
-                                            <div class="d-flex justify-content-between">
-                                                <p class="text-sm">{{ 'Age '+mentor.age }}</p>
-                                                <p class="text-sm">{{ mentor.sex }}</p>
-                                            </div>
-                                            <div class="d-flex justify-content-between">
-                                                <p class="text-sm text-danger"> </p>
-                                                <div>
-                                                    <button data-bs-toggle="modal" v-on:click="this.setEditData(mentor,'active')" data-bs-target="#edit-news" class="btn btn-success btn-sm">view</button>
+                            <ul class="row">
+                                <li class="col-md-4 col-sm-6" v-for="mentor in amentors">
+                                    <div class="profile-box friend-box mb-3">
+                                        <div class="profile-content">
+                                            <div class="image-section">
+                                                <div class="profile-img">
+                                                    <div>
+                                                        <img :src="this.$store.state.img_url+mentor.avatar"
+                                                            class="img-fluid blur-up lazyloaded" style="border-radius: 50%;"
+                                                            alt="profile">
+                                                    </div>
+                                                    
                                                 </div>
                                             </div>
-                                            
-                                        </div>
+                                            <div class="profile-detail">
+                                                <h2>{{ mentor.name }}</h2>
+                                                
+                                                <p class="text-sm">{{ mentor.interest }}</p>
+                                                <p class="text-sm"></p>
+                                                
+                                                <button data-bs-toggle="modal" v-on:click="this.setEditData(mentor,'active')" data-bs-target="#edit-news" class="btn btn-outline">Preview</button>
+                                                
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -65,29 +76,34 @@
                                 <h4>No Notes Found</h4>
                             </div>
 
-                            <div class="row">
-                                <div class="col-sm-6 col-md-3" v-for="mentor in inmentors">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="media-body">
-                                                <img :src="this.$store.state.img_url+mentor.avatar" class="w-100 img-fluid blur-up bg-img lazyloaded" style="display: block;">
-                                                <p class="video-p text-center my-1">{{ mentor.name }}</p>
-                                                <div class="d-flex justify-content-between">
-                                                    <p class="text-sm">{{ 'Age '+mentor.age }}</p>
-                                                    <p class="text-sm">{{ mentor.sex }}</p>
-                                                </div>
-                                                <div class="d-flex justify-content-between">
-                                                    <p class="text-sm text-danger"> </p>
+                            <ul class="row">
+                                <li class="col-md-4 col-sm-6" v-for="mentor in inmentors">
+                                    <div class="profile-box friend-box mb-3">
+                                        <div class="profile-content">
+                                            <div class="image-section">
+                                                <div class="profile-img">
                                                     <div>
-                                                        <button data-bs-toggle="modal" v-on:click="this.setEditData(mentor,'inactive')" data-bs-target="#edit-news" class="btn btn-success btn-sm">view</button>
+                                                        <img :src="this.$store.state.img_url+mentor.avatar"
+                                                            class="img-fluid blur-up lazyloaded" style="border-radius: 50%;"
+                                                            alt="profile">
                                                     </div>
+                                                    
                                                 </div>
+                                            </div>
+                                            <div class="profile-detail">
+                                                <h2>{{ mentor.name }}</h2>
+                                                
+                                                <p class="text-sm">{{ mentor.interest }}</p>
+                                                <p class="text-sm"></p>
+                                                
+                                                <button data-bs-toggle="modal" v-on:click="this.setEditData(mentor,'inactive')" data-bs-target="#edit-news" class="btn btn-success btn-sm">Preview</button>
                                                 
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                </li>
+                            </ul>
+
                         </div>
                     </div>
                 </div>
@@ -100,10 +116,11 @@
                 </div-->
                
             </div>
-        </div> 
-    </div>
+        </div>  
+        </div>
+    </div>        
 
-<div class="modal fade mobile-full-width" data-bs-backdrop="static" data-bs-keyboard="false" id="edit-news">
+    <div class="modal fade mobile-full-width" data-bs-backdrop="static" data-bs-keyboard="false" id="edit-news">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -168,8 +185,6 @@
     </div>
 </div>
 </template>
-
-
 
 <script>
 

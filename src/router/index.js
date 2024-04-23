@@ -9,14 +9,16 @@ import Books from "../views/account/Books.vue";
 import Audios from "../views/account/Audios.vue";
 import Videos from "../views/account/Videos.vue";
 import Discussions from "../views/account/Discussions.vue";
-import AllMentors from "../views/account/AllMentors.vue";
-import Mentors from "../views/account/Mentors.vue";
+import MStudent from "../views/account/MStudents.vue";
 import AllStudents from "../views/account/AllStudents.vue";
 /////Dashbord pageeeeee
 import Home from "../views/dashbord/Home.vue";
 import Forums from "../views/dashbord/Forums.vue";
 import MyModules from "../views/dashbord/MyModules.vue";
 import Recruitment from "../views/dashbord/Recruitment.vue";
+import TrushedStudents from "../views/dashbord/TrushedStudents.vue";
+import AllMentors from "../views/dashbord/AllMentor.vue";
+import SMentors from "../views/dashbord/SMentors.vue";
 ///pages
 import ForumPost from "../views/pages/ForumPost.vue";
 import VideoCourse from "../views/pages/VideoCourse.vue";
@@ -40,6 +42,11 @@ const routes = [
         path:'/recruitments',
         name:'recruitment',
         component:Recruitment
+      },
+      {
+        path:'/trushed-students',
+        name:'trushed-students',
+        component:TrushedStudents
       },
       {
         path:'/my-modules',
@@ -75,6 +82,16 @@ const routes = [
         path:'/forum-post',
         name:'forumpost',
         component:ForumPost
+      },
+      {
+        path:'/all-mentors',
+        name:AllMentors,
+        component:AllMentors
+      },
+      {
+        path:'/student-mentors',
+        name:SMentors,
+        component:SMentors
       }
     ]
   },
@@ -120,14 +137,9 @@ const routes = [
         component:Discussions
       },
       {
-        path:'/account/all-mentors',
-        name:AllMentors,
-        component:AllMentors
-      },
-      {
-        path:'/account/mentors',
-        name:Mentors,
-        component:Mentors
+        path:'/account/mentor-students',
+        name:MStudent,
+        component:MStudent
       },
       {
         path:'/account/all-students',

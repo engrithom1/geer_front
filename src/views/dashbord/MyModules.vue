@@ -12,7 +12,7 @@
     <div class="content-center">
         <div class="card mb-1">
                  <div class="card-header bg-white py-3">
-                     <h2>Modules I Have Takes</h2>
+                     <h2>Modules Choosen</h2>
                  </div>
              </div>
         <!-- friend list -->

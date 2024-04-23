@@ -1,6 +1,6 @@
 <template>
     <div class="login-discription text-center ">
-        <h3>(Form 1 of 3)</h3>
+        <h3>(Form 1 of 2)</h3>
         <h1>Personal Information</h1>
     </div>
     <div class="form-sec mt-3">
@@ -36,18 +36,20 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="marital">Marital Status</label>
+                            <label for="marital">Current Marital Status</label>
                             <select class="form-control" required v-model="form.marital" id="marital">
                                 <option disabled selected value="">Choose Status</option>
                                 <option value="single">Single</option>
-                                <option value="married">Married</option> 
+                                <option value="married">Married</option>
+                                <option value="separated">Separated</option>
+                                <option value="widowed">Widowed</option> 
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" required class="form-control" v-model="contact_email" id="email"/>
+                            <label for="email">Email(option)</label>
+                            <input type="email" class="form-control" v-model="contact_email" id="email"/>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -58,8 +60,8 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="mob2">Mobile No1</label>
-                            <input type="text" required class="form-control" v-model="contact_mob2" id="mob2"/>
+                            <label for="mob2">Mobile No2 (option)</label>
+                            <input type="text" class="form-control" v-model="contact_mob2" id="mob2"/>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -111,11 +113,11 @@
                             <label for="Level">Highest Education</label>
                             <select class="form-control" v-on:change="levelSelected()" required v-model="s_level" id="Level">
                                 <option disabled selected value="">Choose Level</option>
-                                <option value="Certificate">Certificate</option>
-                                <option value="Diploma">Diploma</option>
-                                <option value="Bachelor">Bachelor</option>
-                                <option value="Post Graduate">Post Graduate</option>
-                                <option value="Master">Master</option>
+                                <option value="Ordinary Certificate">Ordinary Certificate</option>
+                                <option value="Ordinary Diploma">Ordinary Diploma</option>
+                                <option value="Bachelor Degree">Bachelor Degree</option>
+                                <option value="Post Graduate">Post Graduate Diploma</option>
+                                <option value="Master Degree">Master Degree</option>
                                 <option value="other">Other, specify</option>
                             </select>
                             <input v-if="this.o_level_show" class="form-control" placeholder="Specify Highest level" type="text" v-model="this.o_level" id="">
@@ -145,7 +147,7 @@
 
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="Sector">Sector you Prefer</label>
+                            <label for="Sector">Which sector do you prefer to specialise in your career endeavors</label>
                             <select class="form-control" v-on:change="sectorSelected()" required v-model="s_sector" id="Sector">
                                 <option disabled selected value="">Choose Sector</option>
                                 <option value="Agriculture, Agribusiness or Agro processing">Agriculture, Agribusiness or Agro processing</option>
@@ -156,7 +158,7 @@
                                 <option value="Energy">Energy</option>
                                 <option value="other">Other, specify</option>
                             </select>
-                            <input v-if="this.o_sector_show" class="form-control" placeholder="Specify Sector you prefer" type="text" v-model="this.o_sector" id="">
+                            <input required v-if="this.o_sector_show" class="form-control" placeholder="Specify Sector you prefer" type="text" v-model="this.o_sector" id="">
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -192,11 +194,11 @@ export default {
   components: {
     
   },
+  props:{user:Object},
   data() {
     return {
       loged: true,
-      user: {},
-      contact_mob1:"",
+      contact_mob1:this.user.phone,
       contact_mob2:"",
       contact_email:"",
       contact_region:"",
@@ -222,6 +224,8 @@ export default {
         device:"",
         contact:"",
         sector:"",
+        s_sector:"",
+        s_level:"",
       },
       
     };
@@ -274,10 +278,11 @@ export default {
         }
 
         this.form.contact = this.contact_mob1+", "+this.contact_mob2+", "+this.contact_email+", "+this.contact_region+", "+this.contact_district
-
-        //console.log(this.form); /student-profile-form
+        this.form.s_sector = this.s_sector
+        this.form.s_level = this.s_level
+        console.log(this.form); 
         var response = await axios
-          .post(this.$store.state.api_url + "/student-profile-form", this.form)
+          .post(this.$store.state.api_url + "/student-profile-form",this.form)
           .catch((errors) => {
             var message = "Network or Server Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})

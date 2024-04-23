@@ -1,8 +1,9 @@
 <template>
     <div class="row">
+        
         <div class="col-md-4 d-flex justify-content-between">
-            <h2>Participants Applied</h2>
-            <a class="btn btn-danger" href="/trushed-students" rel="noopener noreferrer">Tushed</a>
+            <h2>Trushed Participants</h2>
+            <a class="btn btn-success" href="/recruitments" rel="noopener noreferrer">Pre-Selected</a>
         </div>
         <div class="col-md-2 col-6">{{ students.length }} of {{og_students.length}}</div>
         <div class="col-md-2 col-6">
@@ -22,7 +23,6 @@
                 <option value="Bachelor">Bachelor</option>
                 <option value="Post Graduate">Post Graduate</option>
                 <option value="Master">Master</option>
-                <option value="Master">Phd</option>
             </select>
             <select v-if="filter_by == 1" class="form-control" v-model="s_sex" id="sex">
                 <option selected value="male">Male</option>
@@ -32,7 +32,7 @@
                 <option selected value="single">Single</option>
                 <option value="married">Married</option>
                 <option value="separated">Separated</option>
-                <option value="widowed">Widowed</option>  
+                <option value="widowed">Widowed</option>   
             </select>
             <select v-if="filter_by == 4" class="form-control" v-model="s_graduate">
                 <option v-for="year in years" :value="year.graduate_year">{{ year.graduate_year }}</option> 
@@ -311,9 +311,8 @@
                     </div>
                 </div>
                 <div class="col-md-12">
-                    
                     <div class="form-group">
-                        <label for="Level">Assigned Modules</label>
+                        <label for="Level">Assign Modules</label>
                         <p class="text-danger">Don't make any unnesesary Changes to Somebody Selected Modules</p>
                         <div v-for="group in groups">
                             <label class="label-2" :for="'obstako1'+group.id">
@@ -408,33 +407,11 @@ export default {
         quickApprove(student){
             //console.log(student)
             this.student = student
-            var carrier = student.carrier.slice(0,4)
-            if(carrier == 'Paid'){
-                this.s_group = [10,11]
-            }
-            if(carrier == 'Both'){
-                this.s_group = [10,11,12]
-            }
-            if(carrier == 'Self'){
-                this.s_group = [10,12]
-            }
-            
         },
 
         async viewApprove(student){
             //console.log(student)
             this.student = student
-            var carrier = student.carrier.slice(0,4)
-            if(carrier == 'Paid'){
-                this.s_group = [10,11]
-            }
-            if(carrier == 'Both'){
-                this.s_group = [10,11,12]
-            }
-            if(carrier == 'Self'){
-                this.s_group = [10,12]
-            }
-
             var student_id = student.id
 
             var response = await axios.post(this.$store.state.api_url + "/admin-student-details",{student_id})
@@ -450,7 +427,7 @@ export default {
                 this.needs = needs
                 this.employs = employs
                 this.obstacles = employs.obstacles.split(",")
-              //console.log(this.obstacles)
+              console.log(this.obstacles)
             } else {
                 console.log(response.data.errors)
             }
@@ -486,9 +463,9 @@ export default {
                     }
             }
         },
-        async appliedStudents() {
-            var response = await axios.get(this.$store.state.api_url + "/applied-students")
-            console.log(response.data);
+        async appliedTrushStudents() {
+            var response = await axios.get(this.$store.state.api_url + "/applied-trush-students")
+            //console.log(response.data);
             this.og_students = response.data.students;
             if(response.data.length > 50){
                 this.students = response.data.students.slice(0,50)
@@ -553,7 +530,7 @@ export default {
     },
     created() {
         this.isAuth()
-        this.appliedStudents()
+        this.appliedTrushStudents()
         this.getYears()
         this.getModules()
         this.getIntakes()

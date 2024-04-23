@@ -7,7 +7,7 @@
                     <div class="brand-logo">
                         <a href="/">
                             <!--img src="/assets/images/logo.png" alt="logo" class="img-fluid blur-up lazyload"-->
-                            <h2 class="text-white">IMED GEER</h2>
+                            <h2 class="text-white">IMED Connect</h2>
                         </a>
                     </div>
 
@@ -26,7 +26,7 @@
                     </ul>
                 </div>
                 <div class="header-right">
-                    <div class="post-stats">
+                    <!--div class="post-stats">
                         <ul id="counter">
                             <li>
                                 <h3 class="counter-value" data-count="546">0</h3>
@@ -37,7 +37,7 @@
                                 <span>total students </span>
                             </li>
                         </ul>
-                    </div>
+                    </div-->
                     <ul class="option-list">
                         <!--li class="header-btn custom-dropdown dropdown-lg app-btn">
                             <a class="main-link" href="#">
@@ -92,6 +92,28 @@
                                             </router-link>
                                         </div>
                                     </div>
+
+                                    <div  v-if="user.roles_id == 1" class="col-6">
+                                        <div class="app-icon">
+                                            <router-link to="/student-mentors">
+                                                <div class="icon">
+                                                    <img src="/assets/images/icons/mentors.png" width="24px" class="bar-icon" alt="dashbord">
+                                                </div>
+                                                <h5>Mentors</h5>
+                                            </router-link>
+                                        </div>
+                                    </div>
+
+                                    <div  v-if="user.roles_id == 3" class="col-6">
+                                        <div class="app-icon">
+                                            <router-link to="/all-mentors">
+                                                <div class="icon">
+                                                    <img src="/assets/images/icons/mentors.png" width="24px" class="bar-icon" alt="dashbord">
+                                                </div>
+                                                <h5>Mentors</h5>
+                                            </router-link>
+                                        </div>
+                                    </div>
                                     
                                     <div class="col-6">
                                         <div class="app-icon">
@@ -103,7 +125,7 @@
                                             </router-link>
                                         </div>
                                     </div>
-                                    <div class="col-6">
+                                    <div v-if="user.roles_id == 3 || user.roles_id == 1" class="col-6">
                                         <div class="app-icon">
                                             <router-link to="/">
                                                 <div class="icon">
@@ -144,13 +166,23 @@
                                             </router-link>
                                         </div>
                                     </div>
-                                    <div class="col-6">
+                                    <div v-if="user.roles_id < 3" class="col-6">
                                         <div class="app-icon">
                                             <a href="/account">
                                                 <div class="icon">
                                                     <img src="/assets/images/icons/user.png" width="24px" class="bar-icon" alt="dashbord">
                                                 </div>
-                                                <h5>Profile</h5>
+                                                <h5>Account</h5>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div v-if="user.roles_id == 3" class="col-6">
+                                        <div class="app-icon">
+                                            <a href="/account">
+                                                <div class="icon">
+                                                    <img src="/assets/images/icons/admin.png" width="24px" class="bar-icon" alt="dashbord">
+                                                </div>
+                                                <h5>Admin Panel</h5>
                                             </a>
                                         </div>
                                     </div>
@@ -168,23 +200,26 @@
                             </div>
                         </li>
                         <li class="header-btn custom-dropdown profile-btn btn-group">
-                            <a class="main-link" href="/account">
-                                <img src="/assets/images/icons/user_sm.png" class="d-md-none" width="18px"/>
+                            <a class="main-link" href="javascript:void(0)" data-bs-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                                <i class="d-sm-none d-block">
+                                    <img src="/assets/images/icons/user_sm.png" width="20px" alt="">
+                                </i>
                                 <div class="media d-none d-sm-flex ">
                                     <div class="user-img">
-                                        <img :src="this.$store.state.img_url+user.avatar" class="img-fluid blur-up lazyload bg-img"
-                                            alt="user">
+                                        <img :src="this.$store.state.img_url+user.avatar"
+                                            class="img-fluid blur-up lazyload bg-img" alt="user">
                                         <span class="available-stats online"></span>
                                     </div>
                                     <div class="media-body d-none d-md-block">
-                                        <h4>{{ user.name }}</h4>
+                                        <h4>{{user.name}}</h4>
                                         <span>active now</span>
                                     </div>
                                 </div>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <div class="dropdown-header">
-                                    <span>profile</span>
+                                    <span>Quick Menus</span>
                                     <div class="mobile-close">
                                         <h5>close</h5>
                                     </div>
@@ -192,23 +227,33 @@
                                 <div class="dropdown-content">
                                     <ul class="friend-list">
                                         <li>
-                                            <a href="profile.html">
+                                            <a href="/">
                                                 <div class="media">
-                                                    <i data-feather="user"></i>
+                                                    <i class="fa fa-home"></i>
                                                     <div class="media-body">
                                                         <div>
-                                                            <h5 class="mt-0">Profile</h5>
-                                                            <h6>Profile preview & settings</h6>
+                                                            <h5 class="mt-0">Dashbord</h5>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </a>
                                         </li>
-
                                         <li>
-                                            <a href="login.html">
+                                            <a href="/account">
                                                 <div class="media">
-                                                    <i data-feather="log-out"></i>
+                                                    <i class="fa fa-user"></i>
+                                                    <div class="media-body">
+                                                        <div>
+                                                            <h5 class="mt-0">Profile</h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" v-on:click="logout()">
+                                                <div class="media">
+                                                    <i class="fa fa-logout"></i>
                                                     <div class="media-body">
                                                         <div>
                                                             <h5 class="mt-0">log out</h5>

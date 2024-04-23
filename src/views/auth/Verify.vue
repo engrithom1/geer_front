@@ -33,8 +33,8 @@
                                 <h2>Verify</h2>
                             </div>
                             <div class="login-discription">
-                                <h3>Hello, Richard Thomas</h3>
-                                <h4>Code has been sent on 0768448525.
+                                <h3>Hello, {{user.name}}</h3>
+                                <h4>Code has been sent on {{ user.name }}.
                                 </h4>
                             </div>
                             <div class="form-sec">

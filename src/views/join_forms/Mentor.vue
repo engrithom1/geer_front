@@ -1,3 +1,4 @@
+
 <template>
     <div class="login-discription text-center ">
         <h1>Mentor's Required Information</h1>
@@ -29,8 +30,8 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" required class="form-control" v-model="contact_email" id="email"/>
+                            <label for="email">Email (option)</label>
+                            <input type="email" class="form-control" v-model="contact_email" id="email"/>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -41,7 +42,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="mob2">Mobile No2</label>
+                            <label for="mob2">Mobile No2(option)</label>
                             <input type="text" minlength="10" maxlength="10" class="form-control" v-model="contact_mob2" id="mob2"/>
                         </div>
                     </div>
@@ -96,9 +97,9 @@
                                 <option disabled selected value="">Choose Level</option>
                                 <option value="Certificate">Certificate</option>
                                 <option value="Diploma">Diploma</option>
-                                <option value="Bachelor">Bachelor</option>
-                                <option value="Post Graduate">Post Graduate</option>
-                                <option value="Master">Master</option>
+                                <option value="Bachelor's Degree">Bachelor's Degree</option>
+                                <option value="Master's Degree">Master's Degree</option>
+                                <option value="PhD">PhD</option>
                                 <option value="other">Other, specify</option>
                             </select>
                             <input v-if="this.o_level_show" class="form-control" placeholder="Specify Highest level" type="text" v-model="this.o_level" id="">
@@ -108,7 +109,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="skills">Coaching and Mentorship Skills</label>
-                            <textarea required class="form-control" v-model="form.skills" id="skills"></textarea>
+                            <textarea placeholder="provide details of training(course, award, year)" required class="form-control" v-model="form.skills" id="skills"></textarea>
                         </div>
                     </div>
 
@@ -163,30 +164,31 @@
                             <label class="label-2" for="areas12">
                                 <input type="checkbox" v-model="this.areas" id="areas12" value="Innovation Management"> Innovation Management  
                             </label><br>
-                            <label class="label-2" for="areas13">
-                                <input type="checkbox" v-model="this.areas" id="areas13" value="Others"> Others  
-                            </label><br>
+                            <input class="form-control" placeholder="Other specify (option, separete by comma ,)" type="text" v-model="this.other_area" id="">
                         </div> 
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="experience">Experience in business or career coaching</label>
+                            <label for="experience">Do you have any experience in business or career coaching? </label>
                             <select class="form-control" required v-model="form.experience" id="experience">
                                 <option disabled selected value="">Choose Below</option>
                                 <option value="Yes">Yes</option>
                                 <option value="No">No</option>
                             </select>
+                            <input required v-if="this.form.experience == 'Yes'" class="form-control" placeholder="indicate for long and in what areas" type="text" v-model="this.experience_yes" id="">
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="mentees">Optimal number of mentees you can handle</label>
+                            <label for="mentees">Optimal number of mentees can you handle efficiently in mounth</label>
                             <input type="number" min="0" required class="form-control" v-model="form.mentees" id="mentees"/>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="time">Time your prefer</label>
+                            <label for="time">What is your most prefered timing for providing mentorship support to the beneficiaries?
+                                (pick option you mostly prefer)
+                            </label>
                             <select class="form-control" required v-model="form.time" id="time">
                                 <option disabled selected value="">Choose Timing</option>
                                 <option value="Anytime during working hours">Anytime during working hours</option>
@@ -210,10 +212,30 @@
            
         </div>
     </div>
-</template>
 
+    <div class="modal fade" id="dialogBox" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+</template>
 <script>
 import axios from "axios";
+//import bootstrap from "dist/assets/js/bootstrap";
+let dialog;
 
 export default {
   components: {
@@ -235,6 +257,8 @@ export default {
       yearz:[],
       errors: [],
       areas:[],
+      experience_yes:'',
+      other_area:'',
       form:{
         sex:"",
         education_level:"",
@@ -292,13 +316,15 @@ export default {
         }
         
         this.form.contact = this.contact_mob1+", "+this.contact_mob2+", "+this.contact_email+", "+this.contact_region+", "+this.contact_district
-
+        if(this.form.experience == 'Yes'){
+            this.form.experience = this.form.experience+", "+this.experience_yes
+        }
         if(this.areas.length == 0){
             alert('Check Areas of your Expertise')
         }{
-            this.form.expertise = this.areas.toString()
-
-            var response = await axios
+            this.form.expertise = this.areas.toString()+", "+this.other_area
+           //console.log(this.form)
+           var response = await axios
           .post(this.$store.state.api_url + "/mentor-profile-form", this.form)
           .catch((errors) => {
             var message = "Network or Server Errors";
@@ -324,8 +350,13 @@ export default {
         
     }
   },
+  mounted(){
+    
+  },
   created() {
     this.yearArray()
+    dialog = new bootstrap.Modal(document.getElementById('dialogBox'));
+    const trigg = document.querySelector('#modal-trigger');
   }
 };
 </script>

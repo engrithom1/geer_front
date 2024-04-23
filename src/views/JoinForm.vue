@@ -13,16 +13,16 @@
             <div class="header-section">
                 <div class="header-left">
                     <div class="brand-logo">
-                        <a href="index.html">
+                        <a href="/">
                             <!--img src="assets/images/logo.png" alt="logo" class="img-fluid blur-up lazyload"-->
-                            <h2 class="text-white">IMED GEER</h2>
+                            <h2 class="text-white">IMED Connect</h2>
                         </a>
                     </div>
 
                    
                 </div>
                 <div class="header-right">
-                    <div v-show="false" class="post-stats">
+                    <!--div v-show="false" class="post-stats">
                         <ul id="counter">
                             <li>
                                 <h3 class="counter-value" data-count="546">0</h3>
@@ -33,7 +33,7 @@
                                 <span>total students </span>
                             </li>
                         </ul>
-                    </div>
+                    </div-->
                     <ul class="option-list">
                        
                         <li class="header-btn custom-dropdown profile-btn btn-group">
@@ -113,7 +113,7 @@
                                    <h1>You want to Join As!</h1>
                                    <br/>
                                    <div class="btn-section">
-                                        <button type="submit" v-on:click="toggleForm('student')" class="btn btn-solid btn-lg">Student</button>
+                                        <button type="submit" v-on:click="toggleForm('student')" class="btn btn-solid btn-lg">Youth Graduate</button>
                                         <span class="m-1"></span>
                                         <button type="button" v-on:click="toggleForm('mentor')" class="btn btn-solid btn-lg ms-auto">Mentor</button>
                                     </div>
@@ -144,7 +144,7 @@
                             <div class="login-form w-100 px-2">
                                 <div v-if="user.auth_statuses_id == 1">
                                     <button class="btn btn-solid btn-lg" v-on:click="toggleForm('form')">Back</button>
-                                    <StudentProfile />
+                                    <StudentProfile :user="this.user" />
                                 </div>
                                 <div v-if="user.auth_statuses_id == 2">
                                     <StudentEmployment />
@@ -155,6 +155,8 @@
                                 <div v-if="user.auth_statuses_id == 4">
                                     <div class="login-discription text-center ">
                                         <h1>Waiting For Admin Approve</h1>
+                                        <br/>
+                                        <button type="button" v-on:click="this.reload()" class="btn btn-solid btn-lg">Reload</button>
                                     </div>
                                     
                                 </div>
@@ -198,7 +200,30 @@ export default {
     },
     toggleForm(state){
         this.state = state
-    }
+    },
+    async reload() {
+        var response = await axios.post(this.$store.state.api_url+'/reload')
+      .catch(errors =>{
+        console.log(errors)
+     })
+     if(response){
+      if (response.data.success) {
+
+        var message = "Success fully Approved";
+        this.$toast.success(message,{duration: 7000,dismissible: true,})
+        localStorage.removeItem("user")
+        localStorage.setItem('user',JSON.stringify(response.data.user))
+        //console.log('loaded successfully')
+        setTimeout(function(){
+            window.location.replace('/');
+        },2000);
+     }else{
+       
+        var message = response.data.message;
+        this.$toast.success(message,{duration: 10000,dismissible: true,})
+     }
+    } 
+    },
   },
   created() {
    
