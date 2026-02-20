@@ -3,7 +3,7 @@
     <div class="event-cover light-cover mb-5">
         <div class="event-img bg-size blur-up lazyloaded event-dashbord">
             <div class="event-content">
-                <h1>Dashbord</h1>
+                <h1>Dashboard</h1>
             </div>
         </div>
     </div>
@@ -13,7 +13,7 @@
         <!-- friend list -->
         <div class="friend-list-box birthday-list section-b-space">
             <div class="card-title">
-                <h3>Notes Board</h3>
+                <h3>Notice Board</h3>
             </div>
             <div v-if="this.newz_loading" class="loading-img container-fluid">
                 <div  class="friend-list friend-page-list">
@@ -25,7 +25,7 @@
                 <div  class="friend-list friend-page-list">
 
                     <div v-if="news.length == 0">
-                        <h4>No Notes Found</h4>
+                        <h4>No Notice Found</h4>
                     </div>
 
                     <ul>
@@ -256,6 +256,7 @@
 <script>
 
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 
 export default {
     components: {
@@ -278,8 +279,12 @@ export default {
     },
     methods: {
         isAuth() {
-            var user = localStorage.getItem("user");
-            var token = localStorage.getItem("user_token");
+
+            var user_cry = localStorage.getItem("user") || "";
+            var token_cry = localStorage.getItem("user_token") || "";
+            var user = CryptoJS.AES.decrypt(user_cry, 'user').toString(CryptoJS.enc.Utf8) || null
+            var token = CryptoJS.AES.decrypt(token_cry, 'user_token').toString(CryptoJS.enc.Utf8) || null
+
             if (user && token) {
                 this.user = JSON.parse(user);
             } 
@@ -290,7 +295,7 @@ export default {
         async getModules() {
             var response = await axios.get(this.$store.state.api_url + "/get-groups")
             .catch((errors) => {
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
             });
         
@@ -298,6 +303,8 @@ export default {
               this.groups = response.data.dataz
               //console.log(response.data.dataz)
             } else {
+                 var sms = response.data.message;
+                this.$toast.error(sms,{duration: 5000,dismissible: true,})
                 console.log(response.data.errors)
             }
             this.groups_loading = false;
@@ -306,7 +313,7 @@ export default {
         async getNews() {
             var response = await axios.get(this.$store.state.api_url + "/get-news")
             .catch((errors) => {
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
             });
         
@@ -314,6 +321,16 @@ export default {
               this.news = response.data.dataz
               //console.log(response.data.dataz)
             } else {
+                var sms = response.data.message;
+                this.$toast.error(sms,{duration: 5000,dismissible: true,})
+                if(response.data.status == 1){
+                    localStorage.removeItem("user_token")
+                    localStorage.removeItem("user")
+                    setTimeout(function(){
+                        //alert('after waiting')
+                        window.location.replace('/');
+                    },2000);
+                }
                 console.log(response.data.errors)
             }
             this.newz_loading = false;
@@ -340,7 +357,7 @@ export default {
 
         var response = await axios.post(this.$store.state.api_url + "/my-mods",{'user_id':user_id})
         .catch((errors) => {
-        var message = "Network or Server Errors";
+        var message = "Network or Request Errors";
         this.$toast.error(message,{duration: 7000,dismissible: true,})
         });
             console.log(response)
@@ -349,7 +366,9 @@ export default {
            this.mymods = response.data.mymods
         
         } else {
-            console.log(response.data.errors)
+             var sms = response.data.message;
+                this.$toast.error(sms,{duration: 5000,dismissible: true,})
+                console.log(response.data.errors)
         }
 
         },
@@ -358,7 +377,7 @@ export default {
 
         var response = await axios.post(this.$store.state.api_url + "/group-contents",{'group_id':group_id})
         .catch((errors) => {
-        var message = "Network or Server Errors";
+        var message = "Network or Request Errors";
         this.$toast.error(message,{duration: 7000,dismissible: true,})
         });
 
@@ -368,7 +387,9 @@ export default {
         this.audios = response.data.dataz.audios
         //console.log(response.data.dataz)
         } else {
-            console.log(response.data.errors)
+                var sms = response.data.message;
+                this.$toast.error(sms,{duration: 5000,dismissible: true,})
+                console.log(response.data.errors)
         }
 
         this.loading = false
@@ -379,6 +400,17 @@ export default {
         this.isAuth()
         this.getModules()
         this.getNews()
-    }
+    },
+    mounted(){
+     /*var user_cry = localStorage.getItem("user") || "";
+    var user = CryptoJS.AES.decrypt(user_cry, 'user').toString(CryptoJS.enc.Utf8) || null
+
+   user = JSON.parse(user);
+    window.Echo.private('private-test-'+user.id).listen('Hello',(e)=>{
+       console.log('go private');
+       //code for displaying the serve data
+       console.log(e); // the data from the server
+    })*/
+  }
 };
 </script>

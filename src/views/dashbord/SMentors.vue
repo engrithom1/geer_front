@@ -180,6 +180,7 @@
 <script>
 
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 
 export default {
     components: {
@@ -198,8 +199,10 @@ export default {
     },
     methods: {
         isAuth() {
-            var user = localStorage.getItem("user");
-            var token = localStorage.getItem("user_token");
+            var user_cry = localStorage.getItem("user") || "";
+            var token_cry = localStorage.getItem("user_token") || "";
+            var user = CryptoJS.AES.decrypt(user_cry, 'user').toString(CryptoJS.enc.Utf8) || null
+            var token = CryptoJS.AES.decrypt(token_cry, 'user_token').toString(CryptoJS.enc.Utf8) || null
             if (user && token) {
                 this.user = JSON.parse(user);
             } 
@@ -207,7 +210,7 @@ export default {
         async getAllMentors() {
             var response = await axios.get(this.$store.state.api_url + "/get-all-mentors-student")
             .catch((errors) => {
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
             });
         
@@ -216,6 +219,8 @@ export default {
               this.inmentors = response.data.inmentors
               //console.log(response.data.dataz)
             } else {
+                 var sms = response.data.message;
+                this.$toast.error(sms,{duration: 5000,dismissible: true,})
                 console.log(response.data.errors)
             }
            
@@ -227,7 +232,7 @@ export default {
             var response = await axios
         .post(this.$store.state.api_url + "/book-mentor",{id})
         .catch((errors) => {
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
         });
             if (response.data.success) {

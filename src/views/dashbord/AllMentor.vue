@@ -30,7 +30,7 @@
                         <div  class="friend-list friend-page-list">
 
                             <div v-if="amentors.length == 0">
-                                <h4>No Notes Found</h4>
+                                <h4>No Mentor Found</h4>
                             </div>
 
                             <ul class="row">
@@ -73,7 +73,7 @@
                         <div  class="friend-list friend-page-list">
 
                             <div v-if="inmentors.length == 0">
-                                <h4>No Notes Found</h4>
+                                <h4>No Mentor Found</h4>
                             </div>
 
                             <ul class="row">
@@ -175,9 +175,11 @@
 
                 <div v-if="this.status == 'inactive'" class="btn-section mt-3">
                     <button v-on:click="mentorApprove()" class="btn btn-success btn-sm">Approve</button>
+                    <button data-bs-dismiss="modal" class="btn btn-danger btn-sm ml-2">Close</button>
                 </div>
                 <div v-if="this.status == 'active'" class="btn-section mt-3">
-                    <button v-on:click="mentorApprove()" class="btn btn-danger btn-sm">Block</button>
+                    <button v-on:click="mentorApprove()" class="btn btn-success btn-sm">Block</button>
+                    <button data-bs-dismiss="modal" class="btn btn-danger btn-sm ml-2">Close</button>
                 </div>
                </div> 
             </div>
@@ -189,6 +191,7 @@
 <script>
 
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 
 export default {
     components: {
@@ -208,8 +211,10 @@ export default {
     },
     methods: {
         isAuth() {
-            var user = localStorage.getItem("user");
-            var token = localStorage.getItem("user_token");
+            var user_cry = localStorage.getItem("user") || "";
+            var token_cry = localStorage.getItem("user_token") || "";
+            var user = CryptoJS.AES.decrypt(user_cry, 'user').toString(CryptoJS.enc.Utf8) || null
+            var token = CryptoJS.AES.decrypt(token_cry, 'user_token').toString(CryptoJS.enc.Utf8) || null
             if (user && token) {
                 this.user = JSON.parse(user);
             } 
@@ -227,11 +232,14 @@ export default {
         var status = this.status
         var groups = this.s_group.toString()
 
-        var response = await axios
+        if(this.s_group.length == 0){
+            alert('Select atleast one Module for a mentor')
+        }else{
+            var response = await axios
         .post(this.$store.state.api_url + "/approve-mentor",{id, status, groups})
         .catch((errors) => {
 
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
         });
             if (response.data.success) {
@@ -245,12 +253,13 @@ export default {
                 this.errors = response.data.errors;
                 console.log(response.data.errors);
             }
+        }
         },
       
         async getAllMentors() {
             var response = await axios.get(this.$store.state.api_url + "/get-all-mentors")
             .catch((errors) => {
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
             });
         
@@ -268,7 +277,7 @@ export default {
 
         var response = await axios.get(this.$store.state.api_url + "/get-all-groups")
         .catch((errors) => {
-        var message = "Network or Server Errors";
+        var message = "Network or Request Errors";
         this.$toast.error(message,{duration: 7000,dismissible: true,})
         });
 

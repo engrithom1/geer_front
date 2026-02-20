@@ -1,14 +1,15 @@
 import {createStore} from 'vuex'
 import axios from 'axios'
+import * as CryptoJS from 'crypto-js';
 
 export default createStore({
   state: {
 
-    //back end local url
-    api_url:"http://localhost:8000/api",
-    img_url:"http://localhost:8000/storage/images/",
-    pdf_url:"http://localhost:8000/storage/pdf/",
-    audio_url:"http://localhost:8000/storage/audio/",
+    //back end local url 192.168.0.2
+    api_url:"http://192.168.0.2:8000/api",
+    img_url:"http://192.168.0.2:8000/storage/images/",
+    pdf_url:"http://192.168.0.2:8000/storage/pdf/",
+    audio_url:"http://192.168.0.2:8000/storage/audio/",
 
     //back end onli url
     //api_url:"https://akiliforum.com/geer_back/api",
@@ -20,15 +21,24 @@ export default createStore({
     //img_url:"https://imedconnect.or.tz/geer_back/back/public/storage/images/",
     //pdf_url:"https://imedconnect.or.tz/geer_back/back/public/storage/pdf/",
     //audio_url:"https://imedconnect.or.tz/geer_back/back/public/storage/audio/",
+    
     user:{},
     errors:[],
-    errorsSMS:""
+    errorsSMS:"",
+    btn_clicks:false,
+    menu_dialog:false,
   },
 
   getters: {
   },
 
   mutations: {
+    setStatus(state,bool){
+      state.btn_clicks = bool
+   },
+   setMenuDialog(state){
+    state.menu_dialog = !state.menu_dialog
+  },
     setUser(state,user){
       state.user = user
     },
@@ -62,7 +72,7 @@ export default createStore({
       var response = await axios.post(state.api_url+'/reload', bodyParameters,config)
       .catch(errors =>{
         console.log(errors)
-        //commit('setErrors',"Network or Server Errors");
+        //commit('setErrors',"Network or Request Errors");
         return false
 
      })
@@ -72,7 +82,7 @@ export default createStore({
           commit('setUser',response.data.dataz.user)
           localStorage.setItem('user',JSON.stringify(response.data.dataz.user))
           localStorage.setItem('user_token',response.data.dataz.token)
-          //window.location.replace('/');
+          window.location.replace('/');
           return true
 
         } else { 
@@ -82,24 +92,31 @@ export default createStore({
          
   },
     async loginUser({state,commit},user){
+      commit('setStatus',true)
       commit('setZeroErrors');
       commit('setZeroErrorsSMS');
       
       var response = await axios.post(state.api_url+'/login',user)
       .catch(errors =>{
+        commit('setStatus',false)
         console.log(errors)
-        commit('setErrorsSMS',"Network or Server Errors");
+        commit('setErrorsSMS',"Network or Request Errors");
 
      })
 
         if(response.data.success) {
 
           commit('setUser',response.data.dataz.user)
-          localStorage.setItem('user',JSON.stringify(response.data.dataz.user))
-          localStorage.setItem('user_token',response.data.dataz.token)
+          //localStorage.setItem('user',JSON.stringify(response.data.dataz.user))
+          //localStorage.setItem('user_token',response.data.dataz.token)
+          localStorage.setItem('user',CryptoJS.AES.encrypt(JSON.stringify(response.data.dataz.user), 'user').toString())
+          localStorage.setItem('user_token',CryptoJS.AES.encrypt(response.data.dataz.token, 'user_token').toString())
+          
+          
           window.location.replace('/');
 
         } else { 
+          commit('setStatus',false)
           commit('setErrors',response.data.errors);
           commit('setErrorsSMS',response.data.message);
           
@@ -109,22 +126,27 @@ export default createStore({
   async registerUser({state,commit},user){
     commit('setZeroErrors');
     commit('setZeroErrorsSMS');
+    commit('setStatus',true)
     
     var response = await axios.post(state.api_url+'/register',user)
     .catch(errors =>{
+      commit('setStatus',false)
       console.log(errors)
-      commit('setErrors',"Network or Server Errors");
+      commit('setErrorsSMS',"Network or Request Errors");
 
    })
 
       if(response.data.success) {
 
         commit('setUser',response.data.dataz.user)
-        localStorage.setItem('user',JSON.stringify(response.data.dataz.user))
-        localStorage.setItem('user_token',response.data.dataz.token)
+        //localStorage.setItem('user',JSON.stringify(response.data.dataz.user))
+        //localStorage.setItem('user_token',response.data.dataz.token)
+        localStorage.setItem('user',CryptoJS.AES.encrypt(JSON.stringify(response.data.dataz.user), 'user').toString())
+        localStorage.setItem('user_token',CryptoJS.AES.encrypt(response.data.dataz.token, 'user_token').toString())
         window.location.replace('/');
 
       } else { 
+        commit('setStatus',false)
         commit('setErrors',response.data.errors);
         commit('setErrorsSMS',response.data.message);
       }
@@ -134,6 +156,9 @@ export default createStore({
 
     localStorage.removeItem("user_token")
     localStorage.removeItem("user")
+    if(state.menu_dialog == true){
+      commit('setMenuDialog')
+    }
     commit('setUser',{})
     window.location.replace('/');
    /*axios
@@ -150,7 +175,10 @@ export default createStore({
   }
   
    });*/
-}
+},
+  menuDialog({state,commit}){
+    commit('setMenuDialog')
+  }
   },
   
   modules: {

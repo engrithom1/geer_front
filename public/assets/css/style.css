@@ -34041,11 +34041,11 @@ section {
           font-weight: 500;
           text-transform: capitalize; }
         .login-section .login-form .form-sec .bottom-sec .forget-password {
-          font-size: 12px;
+          font-size: 14px;
           font-weight: 500;
           text-transform: capitalize;
           margin-top: -10px;
-          color: #51595e; }
+           }
       .login-section .login-form .form-sec .btn-section {
         margin-top: 30px;
         display: -webkit-box;
@@ -34503,10 +34503,10 @@ section {
                   width: 18px;
                   margin: 0 2px; }
                 .messanger-section .chat-content .tab-box .user-chat .chat-history .avenue-messenger .chat .messages-content .message .timestamp {
-                  position: absolute;
+                  position: initial;
                   bottom: -30px;
                   font-size: 10px;
-                  color: #555;
+                  color: #777;
                   right: 30px; }
                 .messanger-section .chat-content .tab-box .user-chat .chat-history .avenue-messenger .chat .messages-content .message .checkmark-sent-delivered {
                   position: absolute;
@@ -34532,7 +34532,9 @@ section {
                   color: #ffffff;
                   background: #84acd2;
                   border-radius: 10px 10px 0 10px;
-                  margin-bottom: 0; }
+                  margin-bottom: 0; 
+                  margin-top: 30px;
+                }
                 .messanger-section .chat-content .tab-box .user-chat .chat-history .avenue-messenger .chat .messages-content .message:last-child {
                   margin-bottom: 30px; }
                 .messanger-section .chat-content .tab-box .user-chat .chat-history .avenue-messenger .chat .messages-content .message.new {
@@ -39119,7 +39121,8 @@ body.rtl {
     float: left;
     border-radius: 10px 10px 10px 0; }
   .rtl .messanger-section .chat-content .tab-box .user-chat .chat-history .avenue-messenger .chat .messages-content .message .timestamp {
-    left: 30px;
+    left: 0px;
+    overflow-x: visible;
     right: unset; }
   .rtl .messanger-section .chat-content .tab-box .user-chat .chat-history .avenue-messenger .chat .messages-content .message .checkmark-sent-delivered {
     right: unset;
@@ -39891,4 +39894,8 @@ color: #0d6efd !important;
 
 .btn-sm{
   padding: 4px 10px !important;
+}
+
+label{
+  text-transform: none !important;
 }

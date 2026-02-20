@@ -1,3 +1,19 @@
+<style>
+.cvp-video{
+    visibility: visible !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+.cvp-canvas[data-v-352dd94f] {
+    -o-object-fit: contain;
+    object-fit: contain !important;
+    width: 0px !important;
+    height: 0px !important;
+    vertical-align: top;
+}
+</style>
+
+
 <template>
     <!--  event cover start -->
     <div class="event-cover light-cover mb-5">
@@ -21,12 +37,11 @@
                                 <p class="video-d">{{ this.description }}</p> 
                             </div>
                         </div>
-                        <div class="col-md-5">
-                            <div class="popular-song-sec">
-                                <img :src="this.$store.state.img_url+this.thumb" class="lazyload w-100" alt="something else">
-                            </div>    
+                        <div id="player" v-if="this.video_link" class="col-md-7">
+                            <Vue3CanvasVideoPlayer :src="this.video_link" :autoplay="this.set_true" :loop="this.set_true"/>
                         </div>
-                        <div class="col-md-7">
+                        
+                        <div class="col-md-5 mb-3">
                         <div class="popular-song-sec">
                             <ul>
                                 <li v-for="videoz in videolists">
@@ -35,7 +50,7 @@
                                             <img src="/assets/images/play.png" class="event-btn img-fluid blur-up lazyloaded" alt="play">
                                         </div>
                                         <div class="media-body">
-                                            <h5><a href="#" v-on:click="playVideo({title:videoz.sub_title,url:videoz.video_url,label:videoz.label,order:videoz.order})" class="text-capitalize" data-bs-toggle="modal" data-bs-target="#videoPlayer">{{videoz.sub_title}}</a></h5>
+                                            <h5><a href="#player" v-on:click="playVideo({title:videoz.sub_title,id:videoz.id,url:videoz.video_url,label:videoz.label,order:videoz.order})" class="text-capitalize" data-bs-toggle="modal---" data-bs-target="#videoPlayer----">{{videoz.sub_title}}</a></h5>
                                             <h6>{{videoz.label+" "+videoz.order}}</h6>
                                         </div>
                                     </div>
@@ -69,46 +84,75 @@
 
 <script>
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
+import Vue3CanvasVideoPlayer from 'vue3-canvas-video-player';
+import 'vue3-canvas-video-player/dist/style.css';
 
 export default {
     components: {
+        Vue3CanvasVideoPlayer,
     },
     data() {
         return {
             title:"",
+            post_id:'',
+            set_true:true,
             description:"",
             thumb:"",
             videolists:[],
             loading:true,
             user: {},
-            video:{}
+            video:{},
+            video_link:"",
+            item_id:"",
+            
         };
     },
     methods: {
         isAuth() {
-            var user = localStorage.getItem("user");
-            var token = localStorage.getItem("user_token");
+            var user_cry = localStorage.getItem("user") || "";
+            var token_cry = localStorage.getItem("user_token") || "";
+            var user = CryptoJS.AES.decrypt(user_cry, 'user').toString(CryptoJS.enc.Utf8) || null
+            var token = CryptoJS.AES.decrypt(token_cry, 'user_token').toString(CryptoJS.enc.Utf8) || null
             if (user && token) {
                 this.user = JSON.parse(user);
             } 
         },
         getDataQuery(){
             this.title = this.$route.query.title;
+            this.post_id = this.$route.query.id;
             this.description = this.$route.query.description;
             this.thumb = this.$route.query.thumb;
             var videolists = JSON.parse(this.$route.query.video_lists);
 
             videolists = videolists.sort((a,b)=> a.order > b.order ? 1 : -1)
             this.videolists = videolists
-            console.log(this.videolists)
+            //this.video_link = videolists[0].video_url;
+            //console.log(this.videolists)
         },
         stopVideo(){
             var video = document.getElementById("myvp");
             video.pause();
             video.currentTime = 0;
         },
-        playVideo(video){
-           this.video = video
+        async playVideo(video){
+           this.video_link = video.url
+           this.item_id = video.id
+
+           var data = {
+            post_id:this.post_id,
+            item_id:video.id,
+            type:"video"
+           }
+
+           //console.log(data)
+           var response = await axios.post(this.$store.state.api_url + "/send-lean-tracker",data)
+            .catch((errors) => {
+            var message = "Network or Request Errors";
+            this.$toast.error(message,{duration: 7000,dismissible: true,})
+            });
+
+            console.log(response)
         },
         async groupContents() {
 
@@ -118,7 +162,7 @@ export default {
             
             var response = await axios.post(this.$store.state.api_url + "/group-contents",{'group_id':group_id})
             .catch((errors) => {
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
             });
         
@@ -128,6 +172,8 @@ export default {
               this.audios = response.data.dataz.audios
               //console.log(response.data.dataz)
             } else {
+                 var sms = response.data.message;
+                this.$toast.error(sms,{duration: 5000,dismissible: true,})
                 console.log(response.data.errors)
             }
 

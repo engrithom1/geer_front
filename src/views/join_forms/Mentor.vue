@@ -5,7 +5,10 @@
     </div>
     <div class="form-sec mt-3">
         <div>
-            <form @submit.prevent="mentorProfileForm" class="theme-form">
+            <form @submit.prevent="showDialog()" class="theme-form">
+                <div v-if="this.btn_click" class="loading-img container-fluid">
+                    <img class="img-gif" width="300" src="/assets/images/loading/cupertino.gif" alt="#" />
+                </div>
                 <p v-for="error in errors" :key="error" class="text-danger">
                     {{ error[0] }}
                   </p>
@@ -14,7 +17,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="mob1">Age</label>
-                            <input type="number" minlength="2" min="18" maxlength="2" required class="form-control" v-model="form.age" id="mob1"/>
+                            <input type="number" minlength="2" min="18" max="99" maxlength="2" required class="form-control" v-model="form.age" id="mob1"/>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -48,7 +51,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="region">Current Residence</label>
+                            <label for="region">Current residence</label>
                             <select class="form-control" required v-model="contact_region" id="region">
                                 <option disabled selected value="">Choose Region</option>
                                 <option value="Arusha">Arusha</option>
@@ -92,7 +95,7 @@
                     <!--EDUCATION LEVEL-->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="Level">Highest Education</label>
+                            <label for="Level">Highest education</label>
                             <select class="form-control" v-on:change="levelSelected()" required v-model="s_level" id="Level">
                                 <option disabled selected value="">Choose Level</option>
                                 <option value="Certificate">Certificate</option>
@@ -108,7 +111,7 @@
                    
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="skills">Coaching and Mentorship Skills</label>
+                            <label for="skills">Coaching and mentorship skills</label>
                             <textarea placeholder="provide details of training(course, award, year)" required class="form-control" v-model="form.skills" id="skills"></textarea>
                         </div>
                     </div>
@@ -180,7 +183,7 @@
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="mentees">Optimal number of mentees can you handle efficiently in mounth</label>
+                            <label for="mentees">Optimal number of mentees can you handle efficiently in month</label>
                             <input type="number" min="0" required class="form-control" v-model="form.mentees" id="mentees"/>
                         </div>
                     </div>
@@ -206,36 +209,41 @@
                 
                 
                 <div class="btn-section mt-3">
-                    <button class="btn btn-solid btn-lg">Submit</button>
+                    <button :disabled="this.btn_click" type="submit" class="btn btn-solid btn-lg">Submit</button>
                 </div>
             </form>
            
         </div>
     </div>
 
-    <div class="modal fade" id="dialogBox" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Modal body text goes here.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-            </div>
-        </div>
+    <div class="text-center pa-4">
+        <v-dialog
+        v-model="this.dialogVisibility"
+        max-width="400"
+        persistent
+        >
+        <v-card loading>
+            <v-card-title class="">CONFIRM INFORMATION.</v-card-title>
+            <v-card-text>Are you sure you want to send this information?</v-card-text>
+            <template v-slot:actions>
+            <v-spacer></v-spacer>
+
+            <button class="btn btn-danger" @click="dialogVisibility = false">
+                Cancel
+            </button>
+            <span class="mr-3"> </span>
+            <a href="#" class="btn btn-primary" @click="mentorProfileForm()">
+                Yes Submit
+            </a>
+            </template>
+        </v-card>
+        </v-dialog>
     </div>
 
 </template>
 <script>
 import axios from "axios";
-//import bootstrap from "dist/assets/js/bootstrap";
-let dialog;
+import * as CryptoJS from 'crypto-js';
 
 export default {
   components: {
@@ -244,8 +252,9 @@ export default {
   props:{user:Object},
   data() {
     return {
+      dialogVisibility:false,
       loged: true,
-      user: {},
+      btn_click:false,
       contact_mob1:this.user.phone,
       contact_mob2:"",
       contact_email:"",
@@ -273,11 +282,33 @@ export default {
       },
       
     };
-  },
+    },
   methods: {
-   
-    letSee(){
-        alert('its works just fine')
+    showDialog(){
+        
+        
+        if(this.s_level == "other"){
+            this.form.education_level = this.o_level;
+        }else{
+            this.form.education_level = this.s_level;
+        }
+        
+        this.form.contact = this.contact_mob1+", "+this.contact_mob2+", "+this.contact_email+", "+this.contact_region+", "+this.contact_district
+        
+        if(this.areas.length == 0){
+            alert('Check Areas of your Expertise')
+        }else{
+            this.errors = [];
+            this.form.expertise = this.areas.toString()+", "+this.other_area
+
+            if(this.form.sex != "" && this.form.education_level != "" && this.form.age != "" && this.form.mentees != "" && this.form.skills != "" && this.form.experience != "" && this.form.expertise != "" && this.form.interest != "" && this.form.time != "" && this.contact_mob1 != "" && this.contact_region != "" && this.contact_district != ""){
+                this.dialogVisibility = true
+            }else{
+            alert("Fill all required Information")
+            }
+
+        }
+    
     },
     levelSelected(){
         if(this.s_level == "other"){
@@ -307,56 +338,43 @@ export default {
         console.log(years);
     },
     async mentorProfileForm(){
-        this.errors = [];
-
-        if(this.s_level == "other"){
-            this.form.education_level = this.o_level;
-        }else{
-            this.form.education_level = this.s_level;
-        }
-        
-        this.form.contact = this.contact_mob1+", "+this.contact_mob2+", "+this.contact_email+", "+this.contact_region+", "+this.contact_district
-        if(this.form.experience == 'Yes'){
-            this.form.experience = this.form.experience+", "+this.experience_yes
-        }
-        if(this.areas.length == 0){
-            alert('Check Areas of your Expertise')
-        }{
-            this.form.expertise = this.areas.toString()+", "+this.other_area
+          this.dialogVisibility = false
            //console.log(this.form)
+           this.btn_click = true;
+           if(this.form.experience == 'Yes'){
+            this.form.experience = this.form.experience+", "+this.experience_yes
+            }
            var response = await axios
           .post(this.$store.state.api_url + "/mentor-profile-form", this.form)
           .catch((errors) => {
-            var message = "Network or Server Errors";
+            this.btn_click = false;
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
           });
             if (response.data.success) {
+                this.btn_click = false;
               var message = response.data.message;
               this.$toast.success(message,{duration: 7000,dismissible: true,})
               localStorage.removeItem("user")
-              localStorage.setItem('user',JSON.stringify(response.data.user))
-              //window.location.replace('/');
+              //localStorage.setItem('user',JSON.stringify(response.data.user))
+              localStorage.setItem('user',CryptoJS.AES.encrypt(JSON.stringify(response.data.user), 'user').toString())
                 setTimeout(function(){
                     //alert('after waiting')
                     window.location.replace('/');
                 },2000);
              
             } else {
+                this.btn_click = false;
                 var message = response.data.message;
                 this.$toast.error(message,{duration: 7000,dismissible: true,})
                 this.errors = response.data.errors;
             }
-        }
         
     }
   },
-  mounted(){
-    
-  },
+  mounted(){},
   created() {
     this.yearArray()
-    dialog = new bootstrap.Modal(document.getElementById('dialogBox'));
-    const trigg = document.querySelector('#modal-trigger');
   }
 };
 </script>

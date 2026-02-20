@@ -49,6 +49,7 @@
 
 <script>
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 
 export default {
     components: {
@@ -64,8 +65,11 @@ export default {
     },
     methods: {
         isAuth() {
-            var user = localStorage.getItem("user");
-            var token = localStorage.getItem("user_token");
+
+            var user_cry = localStorage.getItem("user") || "";
+            var token_cry = localStorage.getItem("user_token") || "";
+            var user = CryptoJS.AES.decrypt(user_cry, 'user').toString(CryptoJS.enc.Utf8) || null
+            var token = CryptoJS.AES.decrypt(token_cry, 'user_token').toString(CryptoJS.enc.Utf8) || null
             if (user && token) {
                 this.user = JSON.parse(user);
             } 
@@ -73,7 +77,7 @@ export default {
         async myModules() {
             var response = await axios.post(this.$store.state.api_url + "/my-groups")
             .catch((errors) => {
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
             });
         
@@ -81,6 +85,8 @@ export default {
               this.groups = response.data.dataz
               console.log(response.data.dataz)
             } else {
+                 var sms = response.data.message;
+                this.$toast.error(sms,{duration: 5000,dismissible: true,})
                 console.log(response.data.errors)
             }
             this.groups_loading = false
@@ -90,8 +96,10 @@ export default {
     created() {
         this.isAuth()
         this.myModules()
-        this.secrete = Math.floor((Math.random()*9999)+1000)
-        this.secrete2 = Math.floor((Math.random()*99)+11)
+        this.secrete = Math.floor(1000 + Math.random()*9000)
+        this.secrete2 = Math.floor(10 + Math.random()*90)
+
+        //console.log('sec4 -'+this.secrete+" -- sec2 -"+this.secrete2)
     }
 };
 </script>

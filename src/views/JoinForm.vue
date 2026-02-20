@@ -37,8 +37,7 @@
                     <ul class="option-list">
                        
                         <li class="header-btn custom-dropdown profile-btn btn-group">
-                            <a class="main-link" href="javascript:void(0)" data-bs-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
+                            <a class="main-link"  @click="MenuDialog()" href="#" >
                                 <i class="d-sm-none d-block">
                                     <img src="/assets/images/icons/user_sm.png" width="20px" alt="">
                                 </i>
@@ -176,6 +175,7 @@
 
 <script>
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 import StudentProfile from "./join_forms/StudentProfile.vue";
 import StudentEmployment from "./join_forms/StudentEmployment.vue";
 import StudentNeed from "./join_forms/StudentNeed.vue";
@@ -198,6 +198,9 @@ export default {
     logout(){
         this.$store.dispatch("logOut");
     },
+    MenuDialog() {
+      this.$store.dispatch("menuDialog");
+    },
     toggleForm(state){
         this.state = state
     },
@@ -212,7 +215,8 @@ export default {
         var message = "Success fully Approved";
         this.$toast.success(message,{duration: 7000,dismissible: true,})
         localStorage.removeItem("user")
-        localStorage.setItem('user',JSON.stringify(response.data.user))
+        //localStorage.setItem('user',JSON.stringify(response.data.user))
+        localStorage.setItem('user',CryptoJS.AES.encrypt(JSON.stringify(response.data.user), 'user').toString())
         //console.log('loaded successfully')
         setTimeout(function(){
             window.location.replace('/');
@@ -224,6 +228,7 @@ export default {
      }
     } 
     },
+    
   },
   created() {
    

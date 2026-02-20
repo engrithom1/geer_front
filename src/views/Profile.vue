@@ -48,6 +48,12 @@
                             <h6>discussion</h6>
                         </router-link>
                     </li>
+                    <li v-if="this.user.roles_id == 3">
+                        <router-link to="/account/materials">
+                            <span class="fa fa-align-center iw-14 ih-14"></span>
+                            <h6>Materials</h6>
+                        </router-link>
+                    </li>
                     
                     <li v-if="this.user.roles_id == 2">
                         <router-link to="/account/mentor-students">
@@ -61,6 +67,38 @@
                             <h6> Participants</h6>
                         </router-link>
                     </li-->
+                    <li v-if="this.user.roles_id == 3">
+                        <a href="/account/test-panel">
+                            <span class="fa fa-edit iw-14 ih-14"></span>
+                            <h6>Test Panel</h6>
+                        </a>
+                    </li>
+                    <!--li v-if="this.user.roles_id == 1">
+                        <a href="#">
+                            <span class="fa fa-edit iw-14 ih-14"></span>
+                            <h6>Test Results</h6>
+                        </a>
+                    </li-->
+                    <li v-if="this.user.roles_id == 1">
+                        <a href="#">
+                            <span class="fa fa-file iw-14 ih-14"></span>
+                            <h6>Certification</h6>
+                        </a>
+                    </li>
+                     <!--for participant to evalueate program and mentor-->
+                    <li v-if="this.user.roles_id == 1">
+                        <router-link to="/account/student-feedback">
+                            <span class="fa fa-users iw-14 ih-14"></span>
+                            <h6> FeedBack</h6>
+                        </router-link>
+                    </li>
+                    <!--for mentor to evalueate program and participnt-->
+                    <li v-if="this.user.roles_id == 2">
+                        <router-link to="/account/mentor-feedback">
+                            <span class="fa fa-users iw-14 ih-14"></span>
+                            <h6> FeedBack</h6>
+                        </router-link>
+                    </li>
                     <li>
                         <a href="/">
                             <span class="fa fa-user iw-14 ih-14"></span>
@@ -102,6 +140,7 @@
 
 <script>
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 import Bigheader from "../views/components/Bigheader.vue";
 
 export default {
@@ -115,8 +154,10 @@ export default {
     },
     methods: {
         isAuth() {
-        var user = localStorage.getItem("user");
-        var token = localStorage.getItem("user_token");
+            var user_cry = localStorage.getItem("user") || "";
+            var token_cry = localStorage.getItem("user_token") || "";
+            var user = CryptoJS.AES.decrypt(user_cry, 'user').toString(CryptoJS.enc.Utf8) || null
+            var token = CryptoJS.AES.decrypt(token_cry, 'user_token').toString(CryptoJS.enc.Utf8) || null
         if (user && token) {
             this.user = JSON.parse(user);
         } 

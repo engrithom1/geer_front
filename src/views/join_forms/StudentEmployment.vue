@@ -5,7 +5,10 @@
     </div>
     <div class="form-sec mt-3">
         <div>
-            <form @submit.prevent="studentEmployment" class="theme-form">
+            <form @submit.prevent="showDialog()" class="theme-form">
+                <div v-if="this.btn_click" class="loading-img container-fluid">
+                    <img class="img-gif" width="300" src="/assets/images/loading/cupertino.gif" alt="#" />
+                </div>
                 <p v-for="error in errors" :key="error" class="text-danger">
                     {{ error[0] }}
                   </p>
@@ -207,16 +210,41 @@
                 
                 
                 <div class="btn-section mt-3">
-                    <button  class="btn btn-solid btn-lg">Submit</button>
+                    <button :disabled="this.btn_click"  class="btn btn-solid btn-lg">Submit</button>
                 </div>
             </form>
            
         </div>
     </div>
+
+    <div class="text-center pa-4">
+        <v-dialog
+        v-model="this.dialogVisibility"
+        max-width="400"
+        persistent
+        >
+        <v-card loading>
+            <v-card-title class="">CONFIRM INFORMATION.</v-card-title>
+            <v-card-text>Are you sure you want to send this information?</v-card-text>
+            <template v-slot:actions>
+            <v-spacer></v-spacer>
+
+            <button class="btn btn-danger" @click="dialogVisibility = false">
+                Cancel
+            </button>
+            <span class="mr-3"> </span>
+            <a href="#" class="btn btn-primary" @click="studentEmployment()">
+                Yes Submit
+            </a>
+            </template>
+        </v-card>
+        </v-dialog>
+    </div>
 </template>
 
 <script>
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 
 export default {
   components: {
@@ -224,6 +252,8 @@ export default {
   },
   data() {
     return {
+      dialogVisibility:false,
+      btn_click:false,
       loged: true,
       user: {},
       obstako:[],
@@ -258,6 +288,9 @@ export default {
     };
   },
   methods: {
+    showDialog(){
+        this.dialogVisibility = true
+    },
     levelSelected(){
         if(this.s_level == "other"){
             this.o_level_show = true;
@@ -272,7 +305,9 @@ export default {
     
     async studentEmployment(){
 
-            //this.form.obstacles = this.obstako.toString()
+            this.dialogVisibility = false
+            //console.log(this.form)
+            this.btn_click = true;
 
             if(this.form.engaged == 'other'){
                 this.form.engaged = this.engaged_other
@@ -298,18 +333,21 @@ export default {
 
            
             
-            /*console.log(this.form)*/
-            var response = await axios
+            console.log(this.form)
+        var response = await axios
           .post(this.$store.state.api_url + "/student-employment-form", this.form)
           .catch((errors) => {
-            var message = "Network or Server Errors";
+             this.btn_click = false;
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
           });
             if (response.data.success) {
+                 this.btn_click = false;
               var message = response.data.message;
               this.$toast.success(message,{duration: 7000,dismissible: true,})
               localStorage.removeItem("user")
-              localStorage.setItem('user',JSON.stringify(response.data.user))
+              localStorage.setItem('user',CryptoJS.AES.encrypt(JSON.stringify(response.data.user), 'user').toString())
+              //localStorage.setItem('user',JSON.stringify(response.data.user))
               //window.location.replace('/');
                 setTimeout(function(){
                     //alert('after waiting')
@@ -317,6 +355,7 @@ export default {
                 },2000);
              
             } else {
+                 this.btn_click = false;
                 var message = response.data.message;
                 this.$toast.error(message,{duration: 7000,dismissible: true,})
                 this.errors = response.data.errors;

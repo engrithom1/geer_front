@@ -41,7 +41,7 @@
                                                     <div>
                                                         <button data-bs-toggle="modal" v-on:click="this.setEditData(post.id, post.title, post.note_url, post.group_id)" data-bs-target="#edit-news" class="btn btn-success btn-sm"><span class="fa fa-edit"></span></button>
                                                         <span class="px-1"></span>
-                                                        <button v-on:click="this.moduleStatus(post.id,'active')" class="btn btn-danger btn-sm"><span class="fa fa-times"></span></button>
+                                                        <button v-on:click="this.moduleStatus(post.id,'active')" class="btn btn-danger btn-sm"><span class="fa fa-eye-slash"></span></button>
                                                     </div>
                                                 </div>
                                                 
@@ -119,7 +119,7 @@
                                     <input type="file" v-on:change="onChange" accept="application/pdf" class="form-control" required>
                                 </div>
                                 
-                                <div v-if="!this.upload_loading" class="form-book mt-2">
+                                <div  v-if="!this.upload_loading" class="form-book mt-2">
                                     <button type="submit" class="btn btn-success">Submit</button>
                                 </div>
                                 <div v-if="this.upload_loading" class="loading-img container-fluid m-5">
@@ -160,7 +160,7 @@
                         <input type="file" v-on:change="onEditChange" accept="application/pdf" class="form-control">
                     </div>
                    
-                    <div class="form-book mt-2">
+                    <div v-if="!this.upload_loading2" class="form-book mt-2">
                         <button type="submit" class="btn btn-success">Update</button>
                     </div>
                     <div v-if="this.upload_loading2" class="loading-img container-fluid m-5">
@@ -181,6 +181,7 @@
 <script>
 
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 
 export default {
     components: {
@@ -208,8 +209,10 @@ export default {
     },
     methods: {
         isAuth() {
-            var user = localStorage.getItem("user");
-            var token = localStorage.getItem("user_token");
+            var user_cry = localStorage.getItem("user") || "";
+            var token_cry = localStorage.getItem("user_token") || "";
+            var user = CryptoJS.AES.decrypt(user_cry, 'user').toString(CryptoJS.enc.Utf8) || null
+            var token = CryptoJS.AES.decrypt(token_cry, 'user_token').toString(CryptoJS.enc.Utf8) || null
             if (user && token) {
                 this.user = JSON.parse(user);
             } 
@@ -224,10 +227,10 @@ export default {
                     reader.addEventListener('load',function(){
                     }.bind(this), false);
                     reader.readAsDataURL(bok)
-                    if(bok.size < 20000000){
+                    if(bok.size < 50000000){
                         this.book = bok
                     }else{
-                        alert('file is too big should be 19MB or less')
+                        alert('file is too big should be 50MB or less')
                         this.book = ""
                     }
                     //console.log(this.book)
@@ -294,11 +297,12 @@ export default {
         var response = await axios
         .post(this.$store.state.api_url + "/update-book",formData,config)
         .catch((errors) => {
+            this.upload_loading2 = false
             var message = "Network or Server Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
         });
             if (response.data.success) {
-
+                this.upload_loading2 = false
             this.e_group_id = ""
             this.e_title = ""
             this.e_book = ""
@@ -313,7 +317,7 @@ export default {
                 this.errors = response.data.errors;
                 console.log(response.data.errors);
             }
-            this.upload_loading2 = false
+            
         },
 
         async moduleStatus(id,sourse){
@@ -370,11 +374,12 @@ export default {
             var response = await axios
             .post(this.$store.state.api_url + "/create-book",formData,config)
             .catch((errors) => {
+                this.upload_loading = false;
                 var message = "Network or Server Errors";
                 this.$toast.error(message,{duration: 7000,dismissible: true,})
             });
                 if (response.data.success) {
-
+                    this.upload_loading = false;
                 this.group_id = ""
                 this.title = ""
                 this.book = ""
@@ -389,7 +394,7 @@ export default {
                     this.errors = response.data.errors;
                     console.log(response.data.errors);
                 }
-                this.upload_loading = false;
+                
             }else{
                 alert('choose pdf file correctly')
             }    
@@ -408,6 +413,8 @@ export default {
               this.inbooks = response.data.inbooks
               //console.log(response.data.dataz)
             } else {
+                 var sms = response.data.message;
+                this.$toast.error(sms,{duration: 5000,dismissible: true,})
                 console.log(response.data.errors)
             }
             this.newz_loading = false;
@@ -425,6 +432,8 @@ export default {
             this.groups = response.data.groups
             //console.log(response.data.dataz)
             } else {
+                 var sms = response.data.message;
+                this.$toast.error(sms,{duration: 5000,dismissible: true,})
                 console.log(response.data.errors)
             }
             this.newz_loading = false;

@@ -7,13 +7,14 @@
         <div class="px-3">
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                    <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Booked</button>
-                    <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">My Participants</button>
+                    <button class="nav-link active" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">My Participants</button>
+                    <button class="nav-link" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Booked</button>
+                   
                    
                 </div>
             </nav>
             <div class="tab-content mt-3 pb-5" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+                <div class="tab-pane fade" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
                     <div v-if="this.newz_loading" class="loading-img container-fluid">
                         <div  class="friend-list friend-page-list">
                             <img class="img-gif" width="400" src="/assets/images/loading/cupertino.gif" alt="#" />
@@ -44,7 +45,7 @@
                                                 <h2>{{ mentor.name }}</h2>
                                                 
                                                 
-                                                <a href="" v-on:click="accceptStudent(mentor.id)" class="btn btn-outline">
+                                                <a href="#" v-on:click="accceptStudent(mentor.id)" class="btn btn-outline">
                                                 Accept Participant</a>
                                             </div>
                                         </div>
@@ -54,7 +55,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+                <div class="tab-pane fade show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
                     <div v-if="this.expnewz_loading" class="loading-img container-fluid">
                         <div  class="friend-list friend-page-list">
                             <img class="img-gif" width="400" src="/assets/images/loading/cupertino.gif" alt="#" />
@@ -85,11 +86,11 @@
                                                 <h2>{{ mentor.name }}</h2>
                                                 
                                                 
-                                                <div class="d-flex justify-content-between">
+                                                <!--div class="d-flex justify-content-between">
                                                     <button class="btn btn-success">View</button>
                                                     <span class="mx-1"></span>
                                                     <button class="btn btn-primary">Chats</button>
-                                                </div>
+                                                </div-->
                                             </div>
                                         </div>
                                     </div>
@@ -111,6 +112,7 @@
 <script>
 
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 
 export default {
     components: {
@@ -129,8 +131,10 @@ export default {
     },
     methods: {
         isAuth() {
-            var user = localStorage.getItem("user");
-            var token = localStorage.getItem("user_token");
+            var user_cry = localStorage.getItem("user") || "";
+            var token_cry = localStorage.getItem("user_token") || "";
+            var user = CryptoJS.AES.decrypt(user_cry, 'user').toString(CryptoJS.enc.Utf8) || null
+            var token = CryptoJS.AES.decrypt(token_cry, 'user_token').toString(CryptoJS.enc.Utf8) || null
             if (user && token) {
                 this.user = JSON.parse(user);
             } 
@@ -138,7 +142,7 @@ export default {
         async getAllMentors() {
             var response = await axios.get(this.$store.state.api_url + "/get-all-m-student")
             .catch((errors) => {
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
             });
         
@@ -147,6 +151,8 @@ export default {
               this.mystudents = response.data.mystudents
               //console.log(response.data.dataz)
             } else {
+                var sms = response.data.message;
+                this.$toast.error(sms,{duration: 5000,dismissible: true,})
                 console.log(response.data.errors)
             }
            
@@ -158,7 +164,7 @@ export default {
             var response = await axios
         .post(this.$store.state.api_url + "/accept-student",{id})
         .catch((errors) => {
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
         });
             if (response.data.success) {

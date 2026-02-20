@@ -108,6 +108,7 @@
 
 <script>
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 
 export default {
   components: {
@@ -150,7 +151,7 @@ export default {
         var response = await axios
           .post(this.$store.state.api_url + "/student-needs-form", this.form)
           .catch((errors) => {
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
           });
             if (response.data.success) {

@@ -23,7 +23,13 @@
                                 <p class="video-d">{{ this.description }}</p> 
                             </div>
                         </div>
-                        <div class="col-md-12 container-fluid">
+                        <div v-if="this.audio_link" class="col-md-6 container-fluid">
+                            <audio controls>
+                           
+                            <source :src="this.audio_link" type="audio/mpeg">
+                            </audio>
+                        </div>
+                        <div class="col-md-6 container-fluid">
                             <div class="popular-song-sec">
                             <ul>
                                 <li v-for="audio in audiolists">
@@ -32,7 +38,7 @@
                                             <img src="/assets/images/play.png" class="event-btn img-fluid blur-up lazyloaded" alt="play">
                                         </div>
                                         <div class="media-body">
-                                            <h5><a href="#" v-on:click="playVideo({title:audio.sub_title,url:audio.audio_url,label:audio.label,order:audio.order})" class="text-capitalize" data-bs-toggle="modal" data-bs-target="#videoPlayer">{{audio.sub_title}}</a></h5>
+                                            <h5><a href="#" v-on:click="playVideo({title:audio.sub_title,id:audio.id,url:audio.audio_url,label:audio.label,order:audio.order})" class="text-capitalize" data-bs-toggle="modal---" data-bs-target="#videoPlayer---">{{audio.sub_title}}</a></h5>
                                             <h6>{{audio.label+" "+audio.order}}</h6>
                                         </div>
                                     </div>
@@ -66,6 +72,7 @@
 
 <script>
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 
 export default {
     components: {
@@ -77,33 +84,57 @@ export default {
             audiolists:[],
             loading:true,
             user: {},
-            audio:{}
+            audio:{},
+            post_id:"",
+            item_id:"",
+            audio_link:""
         };
     },
     methods: {
         isAuth() {
-            var user = localStorage.getItem("user");
-            var token = localStorage.getItem("user_token");
+            var user_cry = localStorage.getItem("user") || "";
+            var token_cry = localStorage.getItem("user_token") || "";
+            var user = CryptoJS.AES.decrypt(user_cry, 'user').toString(CryptoJS.enc.Utf8) || null
+            var token = CryptoJS.AES.decrypt(token_cry, 'user_token').toString(CryptoJS.enc.Utf8) || null
             if (user && token) {
                 this.user = JSON.parse(user);
             } 
         },
         getDataQuery(){
             this.title = this.$route.query.title;
+            this.post_id = this.$route.query.id;
             this.description = this.$route.query.description;
             var audiolists = JSON.parse(this.$route.query.audio_lists);
 
             audiolists = audiolists.sort((a,b)=> a.order > b.order ? 1 : -1)
             this.audiolists = audiolists
-            console.log(this.audiolists)
+            //console.log(this.audiolists)
         },
         stopVideo(){
             var video = document.getElementById("myvp");
             video.pause();
             video.currentTime = 0;
         },
-        playVideo(audio){
+        async playVideo(audio){
            this.audio = audio
+           this.audio_link = audio.url
+
+           this.item_id = audio.id
+
+           var data = {
+            post_id:this.post_id,
+            item_id:audio.id,
+            type:"audio"
+           }
+
+           //console.log(data)
+           var response = await axios.post(this.$store.state.api_url + "/send-lean-tracker",data)
+            .catch((errors) => {
+            var message = "Network or Request Errors";
+            this.$toast.error(message,{duration: 7000,dismissible: true,})
+            });
+
+            console.log(response)
         },
     },
     created() {

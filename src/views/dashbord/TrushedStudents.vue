@@ -128,7 +128,7 @@
                     <p class="v-p">Prefered Sector : <strong>{{ this.student.sector }}</strong></p>
                 </div>
                 <div class="col-12"></div>
-                <div class="col-md-12">
+                <!--div class="col-md-12">
                     <div class="form-group">
                         <label for="Level">Choose Intake</label>
                         <select class="form-control" required v-model="s_intake" id="Level">
@@ -136,7 +136,7 @@
                             <option v-for="intake in intakes" :value="intake.id">{{ intake.name }} </option>
                         </select>
                     </div>
-                </div>
+                </div-->
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="Level">Assign Modules</label>
@@ -151,6 +151,7 @@
 
                 <div class="btn-section mt-3">
                     <button v-on:click="studentApprove()" class="btn btn-solid btn-sm">Approve</button>
+                    <button data-bs-dismiss="modal" class="btn btn-danger btn-sm ml-2">Close</button>
                 </div>
                </div> 
             </div>
@@ -301,7 +302,7 @@
                 </div-->
                 </div>
 
-                <div class="col-md-12">
+                <!--div class="col-md-12">
                     <div class="form-group">
                         <label for="Level">Choose Intake</label>
                         <select class="form-control" required v-model="s_intake" id="Level">
@@ -309,7 +310,7 @@
                             <option v-for="intake in intakes" :value="intake.id">{{ intake.name }} </option>
                         </select>
                     </div>
-                </div>
+                </div-->
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="Level">Assign Modules</label>
@@ -324,6 +325,7 @@
 
                 <div class="btn-section mt-3">
                     <button v-on:click="studentApprove()" class="btn btn-solid btn-sm">Approve</button>
+                    <button data-bs-dismiss="modal" class="btn btn-danger btn-sm ml-2">Close</button>
                 </div>
                </div> 
             </div>
@@ -334,6 +336,7 @@
 </template>
 <script>
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 
 export default {
     components: {
@@ -358,7 +361,7 @@ export default {
             s_filter:"All",
             filter_by:1,
             user: {},
-            s_intake:"",
+            s_intake:1,
             s_group:[],
             needs:{},
             employs:{},
@@ -367,8 +370,10 @@ export default {
     },
     methods: {
         isAuth() {
-            var user = localStorage.getItem("user");
-            var token = localStorage.getItem("user_token");
+            var user_cry = localStorage.getItem("user") || "";
+            var token_cry = localStorage.getItem("user_token") || "";
+            var user = CryptoJS.AES.decrypt(user_cry, 'user').toString(CryptoJS.enc.Utf8) || null
+            var token = CryptoJS.AES.decrypt(token_cry, 'user_token').toString(CryptoJS.enc.Utf8) || null
             if (user && token) {
                 this.user = JSON.parse(user);
             } 
@@ -376,7 +381,7 @@ export default {
         async getModules() {
             var response = await axios.get(this.$store.state.api_url + "/admin-get-groups")
             .catch((errors) => {
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
             });
         
@@ -392,7 +397,7 @@ export default {
         async getIntakes() {
             var response = await axios.get(this.$store.state.api_url + "/admin-get-intakes")
             .catch((errors) => {
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
             });
         
@@ -416,7 +421,7 @@ export default {
 
             var response = await axios.post(this.$store.state.api_url + "/admin-student-details",{student_id})
             .catch((errors) => {
-            var message = "Network or Server Errors";
+            var message = "Network or Request Errors";
             this.$toast.error(message,{duration: 7000,dismissible: true,})
             });
         
@@ -429,6 +434,9 @@ export default {
                 this.obstacles = employs.obstacles.split(",")
               console.log(this.obstacles)
             } else {
+                
+                var sms = response.data.message;
+                this.$toast.error(sms,{duration: 5000,dismissible: true,})
                 console.log(response.data.errors)
             }
             this.loading_info = false
@@ -447,7 +455,7 @@ export default {
                 var response = await axios
                 .post(this.$store.state.api_url + "/student-approve", {intake,group,student_id,user_id})
                 .catch((errors) => {
-                    var message = "Network or Server Errors";
+                    var message = "Network or Request Errors";
                     this.$toast.error(message,{duration: 7000,dismissible: true,})
                 });
                     if (response.data.success) {

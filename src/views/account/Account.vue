@@ -71,6 +71,7 @@
 
 <script>
 import axios from "axios";
+import * as CryptoJS from 'crypto-js';
 
 export default {
     components: {
@@ -85,12 +86,15 @@ export default {
             n_pw:"",
             cn_pw:"",
             user: {},
+            news:[]
         };
     },
     methods: {
         isAuth() {
-            var user = localStorage.getItem("user");
-            var token = localStorage.getItem("user_token");
+            var user_cry = localStorage.getItem("user") || "";
+            var token_cry = localStorage.getItem("user_token") || "";
+            var user = CryptoJS.AES.decrypt(user_cry, 'user').toString(CryptoJS.enc.Utf8) || null
+            var token = CryptoJS.AES.decrypt(token_cry, 'user_token').toString(CryptoJS.enc.Utf8) || null
             if (user && token) {
                 this.user = JSON.parse(user);
 
@@ -171,7 +175,8 @@ export default {
                         this.$toast.success(message,{duration: 7000,dismissible: true,})
 
                         localStorage.removeItem("user")
-                        localStorage.setItem('user',JSON.stringify(response.data.user))
+                        //localStorage.setItem('user',JSON.stringify(response.data.user))
+                        localStorage.setItem('user',CryptoJS.AES.encrypt(JSON.stringify(response.data.user), 'user').toString())
                     
                     } else {
                         var message = response.data.message;
@@ -196,7 +201,7 @@ export default {
 
             if(this.img != ""){
             var response = await axios
-            .post(this.$store.state.api_url + "/change-avatar",{formData,config})
+            .post(this.$store.state.api_url + "/change-avatar",formData,config)
             .catch((errors) => {
                 var message = "Network or Server Errors";
                 this.$toast.error(message,{duration: 7000,dismissible: true,})
@@ -206,7 +211,10 @@ export default {
                     this.$toast.success(message,{duration: 7000,dismissible: true,})
 
                     localStorage.removeItem("user")
-                    localStorage.setItem('user',JSON.stringify(response.data.user))
+                    //localStorage.setItem('user',JSON.stringify(response.data.user))
+                    localStorage.setItem('user',CryptoJS.AES.encrypt(JSON.stringify(response.data.user), 'user').toString())
+
+                    location.reload();
                 
                 } else {
                     var message = response.data.message;
@@ -218,11 +226,37 @@ export default {
                 alert('choose Avatar image correctly')
             }      
 
-        }      
+        },
+        async getNews() {
+            var response = await axios.get(this.$store.state.api_url + "/get-news")
+            .catch((errors) => {
+            var message = "Network or Request Errors";
+            this.$toast.error(message,{duration: 7000,dismissible: true,})
+            });
+        
+            if (response.data.success) { 
+              this.news = response.data.dataz
+              
+            } else {
+                var sms = response.data.message;
+                this.$toast.error(sms,{duration: 5000,dismissible: true,})
+                if(response.data.status = 1){
+                    localStorage.removeItem("user_token")
+                    localStorage.removeItem("user")
+                    setTimeout(function(){
+                        //alert('after waiting')
+                        window.location.replace('/');
+                    },2000);
+                }
+                console.log(response.data.errors)
+            }
+            this.newz_loading = false;
+        
+        },      
     },
     created() {
         this.isAuth()
-       
+        this.getNews()
     }
 }
 </script>

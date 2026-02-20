@@ -78,7 +78,7 @@
                                                 <div class="icon">
                                                     <img src="/assets/images/icons/dashboard.png" width="24px" class="bar-icon" alt="dashbord">
                                                 </div>
-                                                <h5>Dashbord</h5>
+                                                <h5>Dashboard</h5>
                                             </router-link>
                                         </div>
                                     </div>
@@ -125,35 +125,45 @@
                                             </router-link>
                                         </div>
                                     </div>
-                                    <div v-if="user.roles_id == 3 || user.roles_id == 1" class="col-6">
+                                    <div v-if="user.roles_id == 1" class="col-6">
                                         <div class="app-icon">
-                                            <router-link to="/">
+                                            <router-link to="/module-test">
                                                 <div class="icon">
                                                     <img src="/assets/images/icons/answer.png" width="24px" class="bar-icon" alt="dashbord">
                                                 </div>
-                                                <h5>Test Quiz</h5>
+                                                <h5>Module Test</h5>
+                                            </router-link>
+                                        </div>
+                                    </div>
+                                    <div v-if="user.roles_id == 3" class="col-6">
+                                        <div class="app-icon">
+                                            <router-link to="/test-result">
+                                                <div class="icon">
+                                                    <img src="/assets/images/icons/answer.png" width="24px" class="bar-icon" alt="dashbord">
+                                                </div>
+                                                <h5>Test Results</h5>
                                             </router-link>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="app-icon">
-                                            <router-link to="/">
+                                            <a href="https://chats.imedconnect.or.tz/chats">
                                                 <div class="icon">
                                                     <img src="/assets/images/icons/chat.png" width="24px" class="bar-icon" alt="dashbord">
                                                 </div>
                                                 <h5>Chats</h5>
-                                            </router-link>
+                                            </a>
                                         </div>
                                     </div>
                                     
                                     <div class="col-6">
                                         <div class="app-icon">
-                                            <router-link to="/">
+                                            <a href="https://chats.imedconnect.or.tz/livestream">
                                                 <div class="icon">
                                                     <img src="/assets/images/icons/instagram-live.png" width="24px" class="bar-icon" alt="dashbord">
                                                 </div>
                                                 <h5>Live Stream</h5>
-                                            </router-link>
+                                            </a>
                                         </div>
                                     </div>
                                     <div v-if="user.roles_id == 3" class="col-6">
@@ -186,6 +196,16 @@
                                             </a>
                                         </div>
                                     </div>
+                                    <!--div class="col-6">
+                                        <div class="app-icon">
+                                            <router-link to="/chats">
+                                                <div class="icon">
+                                                    <img src="/assets/images/icons/book.png" width="24px" class="bar-icon" alt="dashbord">
+                                                </div>
+                                                <h5>Demo Chats</h5>
+                                            </router-link>
+                                        </div>
+                                    </div-->
                                     <div class="col-6">
                                         <div class="app-icon">
                                             <a href="#" v-on:click="logout()">
@@ -200,8 +220,8 @@
                             </div>
                         </li>
                         <li class="header-btn custom-dropdown profile-btn btn-group">
-                            <a class="main-link" href="javascript:void(0)" data-bs-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
+                            <a class="main-link" @click="MenuDialog()" href="#"
+                               >
                                 <i class="d-sm-none d-block">
                                     <img src="/assets/images/icons/user_sm.png" width="20px" alt="">
                                 </i>
@@ -289,8 +309,12 @@ export default {
   },
   methods: {
     logout(){
+        
         this.$store.dispatch("logOut");
-    }
+    },
+    MenuDialog() {
+      this.$store.dispatch("menuDialog");
+    },
   },
   created() {
    
